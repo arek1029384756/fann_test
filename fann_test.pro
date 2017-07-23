@@ -11,5 +11,5 @@ QMAKE_CXXFLAGS += -Wextra -pedantic -std=c++11
 LIBS += -L/usr/lib/$$LOCAL_QT5_DIR -lQt5Widgets
 
 # Input
-HEADERS += window.h
+HEADERS += FileReader.hpp FileReaderCSV.hpp window.h
 SOURCES += main.cpp window.cpp
