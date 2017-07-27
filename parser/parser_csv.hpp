@@ -1,24 +1,18 @@
-#ifndef FILE_READER_CSV
-#define FILE_READER_CSV
+#ifndef PARSER_CSV
+#define PARSER_CSV
 
 #include <iostream>
 #include <fstream>
 #include <algorithm>
-#include "FileReader.hpp"
+#include "parser_interface.hpp"
 
-namespace file_reader {
+namespace parsers {
 
-    class FileReaderCSV : public FileReader {
+    class ParserCSV : public ParserInterface {
 
         std::size_t m_csvColumn;
 
         std::vector<double> m_data;
-
-        FileReaderCSV() {}
-
-        FileReaderCSV(std::size_t column = 0)
-            : m_csvColumn(column) {
-        }
 
         void setTokenData(const std::string& token) {
             try {
@@ -30,7 +24,11 @@ namespace file_reader {
             }
         }
 
-        protected:
+        public:
+        ParserCSV(std::size_t column = 0)
+            : m_csvColumn(column) {
+        }
+
         virtual void parseLine(const std::string& line) override {
             try {
                 std::vector<std::string> tokens;
@@ -48,20 +46,14 @@ namespace file_reader {
             }
         }
 
-        public:
+        virtual const std::vector<double>& getData() const override {
+            return m_data;
+        }
+
         void setColumn(std::size_t column) {
             m_csvColumn = column;
         }
 
-        const std::vector<double>& getData() const {
-            return m_data;
-        }
-
-        static FileReader* getInstance(std::size_t column = 0) {
-            static FileReaderCSV n(column);
-            return &n;
-        }
- 
     };
 }
 

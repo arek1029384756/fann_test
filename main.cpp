@@ -1,7 +1,8 @@
 #include <QApplication>
 #include <iostream>
-#include "window.h"
-#include "FileReaderCSV.hpp"
+#include <window.h>
+#include <file_reader.hpp>
+#include <parser_csv.hpp>
 
 namespace {
     class App {
@@ -46,11 +47,12 @@ namespace {
 
         int run() {
             try {
-                auto freader = file_reader::FileReaderCSV::getInstance(4);
+                parsers::ParserCSV parser(4);
+                file_reader::FileReader<parsers::ParserCSV> freader(&parser);
                 const std::string filename = (m_argc > 1) ? m_argv[1] : "<empty>";
-                freader->readFile(filename);
+                freader.readFile(filename);
 
-                auto data = freader->getData();
+                auto data = parser.getData();
                 /*for(const auto& x : data) {
                     std::cout << x << std::endl;
                 }*/

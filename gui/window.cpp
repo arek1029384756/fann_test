@@ -81,7 +81,7 @@ void Window::drawInfo(QPainter& painter) const
 
 void Window::drawGraph(QPainter& painter) const
 {
-    auto pen = QPen(Qt::blue, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    auto pen = QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     painter.setPen(pen);
     QPointF prev = QPointF(0, 0);
     std::size_t idx = 0;

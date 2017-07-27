@@ -7,7 +7,12 @@
 
 namespace file_reader {
 
+    template<typename TParser>
     class FileReader {
+
+        TParser* m_parser;
+
+        FileReader() = delete;
 
         void removeWindowsDelim(std::string& line) {
             try {
@@ -21,11 +26,10 @@ namespace file_reader {
             }
         }
 
-        protected:
-        virtual void parseLine(const std::string& line) = 0;
-
         public:
-        virtual const std::vector<double>& getData() const = 0;
+        FileReader(TParser* const parser)
+            : m_parser(parser) {
+        }
 
         void readFile(const std::string& filename) {
             std::ifstream ifs(filename);
@@ -33,7 +37,7 @@ namespace file_reader {
                 std::string line;
                 while(std::getline(ifs, line)) {
                     removeWindowsDelim(line);
-                    parseLine(line);
+                    m_parser->parseLine(line);
                 }
             } else {
                 throw std::runtime_error(std::string("File open error '") + filename + std::string("'"));
