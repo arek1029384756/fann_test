@@ -9,6 +9,7 @@ Window::Window(QWidget *parent)
     : QWidget(parent)
 {
     setWindowTitle(tr("FANN test"));
+    setStyleSheet("background-color:lightGray;");
     resize(1024, 512);
 
     //QTimer::singleShot(100, this, SLOT(updateData()));
@@ -68,9 +69,6 @@ void Window::initPainter(QPainter& painter) const
 void Window::drawGrid(QPainter& painter) const
 {
     painter.setPen(QPen(Qt::gray, 0));
-    painter.setBrush(Qt::lightGray);
-    QRectF boundingRect(QPointF(0, 0) - sOff, QSizeF(szX, szY));
-    painter.drawRect(boundingRect);
 
     for(std::size_t j = 0; j < XCNT; ++j) {
         auto pointA = QPointF(j * XSIZE, 0) - sOff;
