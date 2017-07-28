@@ -5,8 +5,6 @@
 #include <chrono>
 #include "window.h"
 
-// *** temporary version, hardcoded values to be replaced
-
 Window::Window(QWidget *parent)
     : QWidget(parent)
 {
@@ -22,58 +20,97 @@ void Window::updateData()
     //QTimer::singleShot(1000, this, SLOT(updateData()));
 }
 
-double Window::getMaxStock(const std::vector<double>* const data) const
+void Window::getMinMaxStock(const std::vector<double>* const data, double& min, double& max) const
 {
-    auto itMax = std::max_element(data->begin(), data->end());
-    return *itMax;
+    auto itMinMax = std::minmax_element(data->begin(), data->end());
+    min = *itMinMax.first;
+    max = *itMinMax.second;
 }
 
 void Window::setData(const std::vector<double>* const data, const std::string& filename)
 {
     m_fileName = filename;
-    m_dataLen = data->size();
-    m_dataMax = getMaxStock(data);
     m_data = data;
+    m_dataLen = m_data->size();
+    getMinMaxStock(m_data, m_dataMin, m_dataMax);
 
     std::cout << "File:\t\t" << m_fileName << std::endl;
     std::cout << "Data length:\t" << m_dataLen << std::endl;
     std::cout << "Data max:\t" << m_dataMax << std::endl;
+    std::cout << "Data min:\t" << m_dataMin << std::endl << std::endl;
 }
 
 QPointF Window::d2phy(const std::pair<std::size_t, double>& d) const
 {
-    static const auto soff = QPointF(1024.0, 512.0);
-    qreal dRX = 2048.0 / m_dataLen;
-    qreal dRY = 1024.0 / m_dataMax;
-    return QPointF(dRX * d.first, 1024.0 - dRY * d.second) - soff;
+    qreal dRX = szX / m_dataLen;
+    qreal dRY = szY / (m_dataMax - m_dataMin);
+    auto p = QPointF(dRX * d.first, szY - dRY * (d.second - m_dataMin));
+    return p - sOff;
+}
+
+std::pair<std::size_t, double> Window::phy2d(const QPointF& point) const
+{
+    qreal dLX = static_cast<qreal>(m_dataLen) / szX;
+    qreal dLY = static_cast<qreal>(m_dataMax - m_dataMin) / szY;
+    auto p = -point + sOff;
+    auto x = dLX * p.x();
+    auto y = dLY * p.y() + m_dataMin;
+    return std::make_pair(static_cast<std::size_t>(x), y);
 }
 
 void Window::initPainter(QPainter& painter) const
 {
     painter.setRenderHint(QPainter::Antialiasing);
     painter.translate(width() / 2, height() / 2);
-    painter.scale(width() / 2048.0, height() / 1024.0);
+    painter.scale(width() / szX, height() / szY);
 }
 
 void Window::drawGrid(QPainter& painter) const
 {
     painter.setPen(QPen(Qt::gray, 0));
     painter.setBrush(Qt::lightGray);
-    painter.drawRect(0 - 1024, 0 - 512, 2048, 1024);
+    QRectF boundingRect(QPointF(0, 0) - sOff, QSizeF(szX, szY));
+    painter.drawRect(boundingRect);
 
-    for(std::size_t j = 0; j < 32; ++j) {
-        painter.drawLine(j * 64 - 1024, 0 - 512, j * 64 - 1024, 1024 - 512);
+    for(std::size_t j = 0; j < XCNT; ++j) {
+        auto pointA = QPointF(j * XSIZE, 0) - sOff;
+        auto pointB = QPointF(j * XSIZE, szY) - sOff;
+        painter.drawLine(pointA, pointB);
     }
 
-    for(std::size_t j = 0; j < 16; ++j) {
-        painter.drawLine(0 - 1024, j * 64 - 512, 2048 - 1024, j * 64 - 512);
+    for(std::size_t j = 0; j < YCNT; ++j) {
+        auto pointA = QPointF(0, j * YSIZE) - sOff;
+        auto pointB = QPointF(szX, j * YSIZE) - sOff;
+        painter.drawLine(pointA, pointB);
+    }
+}
+
+void Window::drawAxis(QPainter& painter) const
+{
+    if(m_dataMin < 0 && m_dataMax > 0) {
+        painter.setPen(QPen(Qt::red, 0));
+        auto pointA = d2phy(std::make_pair(0, 0.0));
+        auto pointB = d2phy(std::make_pair(m_dataLen, 0.0));
+        painter.drawLine(pointA, pointB);
+    }
+}
+
+void Window::drawScale(QPainter& painter) const
+{
+    painter.setPen(Qt::darkRed);
+    for(std::size_t j = 1; j < YCNT; ++j) {
+        auto pointB = QPointF(szX, j * YSIZE) - sOff;
+        auto v = phy2d(pointB);
+        auto boundingRect = QRectF(pointB - QPointF(128, 12), QSizeF(128, 24));
+        painter.setFont(QFont("Courier New", 14, QFont::Bold));
+        auto s = QString::number(v.second, 'f', 2);
+        painter.drawText(boundingRect, Qt::AlignRight | Qt::AlignVCenter, s);
     }
 }
 
 void Window::drawInfo(QPainter& painter) const
 {
-    auto boundingRect = QRectF(0 - 1024, 0 - 512, 512, 64);
-    //painter.drawRect(boundingRect);
+    auto boundingRect = QRectF(QPointF(0, 0) - sOff, QSizeF(512, 64));
     painter.setPen(Qt::black);
     painter.setFont(QFont("Courier New", 18, QFont::Bold));
     painter.drawText(boundingRect, Qt::AlignCenter, QString(m_fileName.c_str()));
@@ -101,6 +138,8 @@ void Window::paintEvent(QPaintEvent *)
     initPainter(painter);
 
     drawGrid(painter);
+    drawAxis(painter);
     drawGraph(painter);
+    drawScale(painter);
     drawInfo(painter);
 }
