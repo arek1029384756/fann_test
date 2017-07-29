@@ -39,7 +39,9 @@ class Window : public QWidget
 
     std::set<int> m_mask;
 
-    void getMinMaxStock(const mw::DataVector* const dataV, double& min, double& max) const;
+    void getMinMaxStock(double& min, double& max) const;
+
+    void testDataPresence() const;
 
     QPointF d2phy(const std::pair<std::size_t, double>& d) const;
 

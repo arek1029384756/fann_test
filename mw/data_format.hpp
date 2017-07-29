@@ -40,6 +40,10 @@ namespace mw {
             return m_names;
         }
 
+        std::size_t elementDataSize() const {
+            return m_elements[0].dataSize();
+        }
+
         void addElement(const DataElement& elem) {
             m_elements.emplace_back(elem);
         }

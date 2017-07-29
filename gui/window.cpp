@@ -18,7 +18,7 @@ namespace {
 }
 
 Window::Window(QWidget *parent)
-    : QWidget(parent)
+    : QWidget(parent), m_dataV(0)
 {
     setWindowTitle(tr("FANN test"));
     setStyleSheet("background-color:lightGray;");
@@ -33,12 +33,31 @@ void Window::updateData()
     //QTimer::singleShot(1000, this, SLOT(updateData()));
 }
 
-void Window::getMinMaxStock(const mw::DataVector* const dataV, double& min, double& max) const
+void Window::getMinMaxStock(double& min, double& max) const
 {
-    auto res = math::compute<math::Limits>(*dataV, m_mask);
-    //auto res = math::Limits::operation(*dataV, m_mask);
+    auto res = math::compute<math::Limits>(*m_dataV, m_mask);
     min = res.first;
     max = res.second;
+}
+
+void Window::testDataPresence() const {
+    try {
+        std::cout << "Test of data presence on vector 0" << std::endl;
+        auto names = m_dataV->getNames();
+        auto elem = m_dataV->getElements();
+        for(const auto& m : m_mask) {
+            auto data = elem.at(0).getData();
+            auto name = names.at(m);
+            auto val = data.at(m);
+            std::cout << "#" << m << ": " << name << "  " << val << std::endl;
+        }
+        std::cout << std::endl;
+    } catch(const std::out_of_range& e) {
+        throw std::runtime_error(
+                std::string("[2] Chosen dataset index exceeds range. ") +
+                std::string("Maybe your input file lacks some columns? '") +
+                e.what() + std::string("'"));
+    }
 }
 
 void Window::setData(const mw::DataVector* const dataV, const std::set<int>& mask, const std::string& filename)
@@ -48,7 +67,9 @@ void Window::setData(const mw::DataVector* const dataV, const std::set<int>& mas
     m_dataV = dataV;
     auto elem = m_dataV->getElements();
     m_dataLen = elem.size();
-    getMinMaxStock(m_dataV, m_dataMin, m_dataMax);
+
+    testDataPresence();
+    getMinMaxStock(m_dataMin, m_dataMax);
 
     std::cout << "File:\t\t" << m_fileName << std::endl;
     std::cout << "Data length:\t" << m_dataLen << std::endl;
@@ -139,8 +160,8 @@ void Window::drawInfo(QPainter& painter) const
 
 void Window::drawGraph(QPainter& painter) const
 {
+    std::vector<QPointF> prev(m_dataV->elementDataSize());
     auto elem = m_dataV->getElements();
-    std::vector<QPointF> prev(elem[0].dataSize());
     std::size_t idx = 0;
     for(const auto& x : elem) {
         auto v = x.getData();

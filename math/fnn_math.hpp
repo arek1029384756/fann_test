@@ -40,7 +40,7 @@ namespace math {
         static std::vector<double> operation(const mw::DataVector& in) {
             std::cout << "mean" << std::endl;
             auto elem = in.getElements();
-            std::vector<double> zero(elem[0].dataSize(), 0.0);
+            std::vector<double> zero(in.elementDataSize(), 0.0);
             std::vector<double> sums = std::accumulate(elem.begin(), elem.end(), zero, [&](std::vector<double> sum, mw::DataElement v) {
                 for(std::size_t i = 0; i < zero.size(); ++i) {
                     auto& x = sum[i];
@@ -64,7 +64,7 @@ namespace math {
         static std::vector<double> operation(const mw::DataVector& in, std::vector<double> mean) {
             std::cout << "sigma" << std::endl;
             auto elem = in.getElements();
-            std::vector<double> zero(elem[0].dataSize(), 0.0);
+            std::vector<double> zero(in.elementDataSize(), 0.0);
             std::vector<double> sums = std::accumulate(elem.begin(), elem.end(), zero, [&](std::vector<double> sum, mw::DataElement v) {
                 for(std::size_t i = 0; i < zero.size(); ++i) {
                     auto& x = sum[i];
@@ -90,7 +90,7 @@ namespace math {
             return Oper::operation(args...);
         } catch(const std::out_of_range& e) {
             throw std::runtime_error(
-                std::string("Chosen dataset index exceeds range. ") +
+                std::string("[1] Chosen dataset index exceeds range. ") +
                 std::string("Maybe your input file lacks some columns? '") +
                     e.what() + std::string("'"));
         }
