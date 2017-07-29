@@ -85,7 +85,7 @@ namespace math {
     };
 
     template<class Oper, class... TArgs>
-    auto compute(TArgs... args) {
+    auto compute(TArgs&... args) {
         try {
             return Oper::operation(args...);
         } catch(const std::out_of_range& e) {
@@ -95,10 +95,6 @@ namespace math {
                     e.what() + std::string("'"));
         }
     }
-
-
-    //void normalize(const std::vector<mw::DataElement>& in, std::vector<mw::DataElement>& out) {
-    //}
 }
 
 #endif
