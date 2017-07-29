@@ -15,7 +15,7 @@ LOCAL_QT5_INC =
 LOCAL_QT5_LIB = $$LOCAL_QT5_PFX
 INCLUDEPATH += .
 INCLUDEPATH += ./mw ./math ./file_io ./parser ./gui /usr/include/$$LOCAL_QT5_INC/qt5/QtWidgets
-QMAKE_CXXFLAGS += -Wextra -pedantic -std=c++11
+QMAKE_CXXFLAGS += -Wextra -pedantic -std=c++1y
 LIBS += -L/usr/lib/$$LOCAL_QT5_LIB -lQt5Widgets
 
 # Input

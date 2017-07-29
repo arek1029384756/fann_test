@@ -35,7 +35,7 @@ class Window : public QWidget
 
     double m_dataMin;
 
-    const mw::DataVector* m_data;
+    const mw::DataVector* m_dataV;
 
     std::set<int> m_mask;
 
@@ -62,7 +62,7 @@ class Window : public QWidget
 
     public:
         Window(QWidget *parent = 0);
-        void setData(const mw::DataVector* const data, const std::set<int>& mask, const std::string& filename);
+        void setData(const mw::DataVector* const dataV, const std::set<int>& mask, const std::string& filename);
 
     protected:
         void paintEvent(QPaintEvent *event) override;

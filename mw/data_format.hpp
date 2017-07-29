@@ -49,6 +49,11 @@ namespace mw {
         }
 
         void print() {
+            for(const auto& n : m_names) {
+                std::cout << n << "\t";
+            }
+            std::cout << std::endl;
+
             for(const auto& el : m_elements) {
                 auto v = el.getData();
                 for(auto val : v) {

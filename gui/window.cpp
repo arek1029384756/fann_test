@@ -7,6 +7,16 @@
 #include <fnn_math.hpp>
 #include "window.h"
 
+namespace {
+    static const QColor colors[] = { Qt::yellow,
+        Qt::darkGreen,
+        Qt::red,
+        Qt::blue,
+        Qt::darkMagenta,
+        Qt::darkCyan,
+        Qt::black };
+}
+
 Window::Window(QWidget *parent)
     : QWidget(parent)
 {
@@ -25,19 +35,20 @@ void Window::updateData()
 
 void Window::getMinMaxStock(const mw::DataVector* const dataV, double& min, double& max) const
 {
-    auto res = math::limits(*dataV, m_mask);
+    auto res = math::compute<math::Limits>(*dataV, m_mask);
+    //auto res = math::Limits::operation(*dataV, m_mask);
     min = res.first;
     max = res.second;
 }
 
-void Window::setData(const mw::DataVector* const data, const std::set<int>& mask, const std::string& filename)
+void Window::setData(const mw::DataVector* const dataV, const std::set<int>& mask, const std::string& filename)
 {
     m_fileName = filename;
     m_mask = mask;
-    m_data = data;
-    auto elem = m_data->getElements();
+    m_dataV = dataV;
+    auto elem = m_dataV->getElements();
     m_dataLen = elem.size();
-    getMinMaxStock(m_data, m_dataMin, m_dataMax);
+    getMinMaxStock(m_dataV, m_dataMin, m_dataMax);
 
     std::cout << "File:\t\t" << m_fileName << std::endl;
     std::cout << "Data length:\t" << m_dataLen << std::endl;
@@ -112,24 +123,23 @@ void Window::drawScale(QPainter& painter) const
 
 void Window::drawInfo(QPainter& painter) const
 {
-    auto boundingRect = QRectF(QPointF(0, 0) - sOff, QSizeF(512, 64));
-    painter.setPen(Qt::black);
     painter.setFont(QFont("Courier New", 18, QFont::Bold));
-    painter.drawText(boundingRect, Qt::AlignCenter, QString(m_fileName.c_str()));
+    auto boundingRect = QRectF(QPointF(10, 10) - sOff, QSizeF(512, 32));
+    painter.setPen(Qt::black);
+    painter.drawText(boundingRect, Qt::AlignLeft, QString(m_fileName.c_str()));
+
+    std::size_t idx = 1;
+    auto names = m_dataV->getNames();
+    for(const auto& m : m_mask) {
+        painter.setPen(colors[m]);
+        boundingRect = QRectF(QPointF(10, 10 + 32 * idx++) - sOff, QSizeF(512, 32));
+        painter.drawText(boundingRect, Qt::AlignLeft, QString(names[m].c_str()));
+    }
 }
 
 void Window::drawGraph(QPainter& painter) const
 {
-    static const QColor colors[] = { Qt::yellow,
-        Qt::green,
-        Qt::red,
-        Qt::blue,
-        Qt::darkMagenta,
-        Qt::darkCyan,
-        Qt::black };
-
-
-    auto elem = m_data->getElements();
+    auto elem = m_dataV->getElements();
     std::vector<QPointF> prev(elem[0].dataSize());
     std::size_t idx = 0;
     for(const auto& x : elem) {

@@ -25,8 +25,11 @@ namespace parsers {
                 }
                 m_dataV.addElement(el);
             } catch(const std::invalid_argument& e) {
-                //ignore non-number tokens
-                std::cout << "Ignoring non-number tokens" << std::endl;
+                for(const auto& t : tokens) {
+                    m_dataV.addName(t);
+                    std::cout << t << std::endl;
+                }
+                std::cout << "Processed non-number tokens" << std::endl;
             }
         }
 
