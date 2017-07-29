@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <vector>
 #include <memory>
+#include <set>
+#include <data_format.hpp>
 //#include <exception>
 //#include <stdexcept>    //covering g++ version differences
 
@@ -33,9 +35,11 @@ class Window : public QWidget
 
     double m_dataMin;
 
-    const std::vector<double>* m_data;
+    const mw::DataVector* m_data;
 
-    void getMinMaxStock(const std::vector<double>* const data, double& min, double& max) const;
+    std::set<int> m_mask;
+
+    void getMinMaxStock(const mw::DataVector* const dataV, double& min, double& max) const;
 
     QPointF d2phy(const std::pair<std::size_t, double>& d) const;
 
@@ -58,7 +62,7 @@ class Window : public QWidget
 
     public:
         Window(QWidget *parent = 0);
-        void setData(const std::vector<double>* const data, const std::string& filename);
+        void setData(const mw::DataVector* const data, const std::set<int>& mask, const std::string& filename);
 
     protected:
         void paintEvent(QPaintEvent *event) override;

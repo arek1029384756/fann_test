@@ -2,7 +2,9 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <set>
 #include <chrono>
+#include <fnn_math.hpp>
 #include "window.h"
 
 Window::Window(QWidget *parent)
@@ -21,18 +23,20 @@ void Window::updateData()
     //QTimer::singleShot(1000, this, SLOT(updateData()));
 }
 
-void Window::getMinMaxStock(const std::vector<double>* const data, double& min, double& max) const
+void Window::getMinMaxStock(const mw::DataVector* const dataV, double& min, double& max) const
 {
-    auto itMinMax = std::minmax_element(data->begin(), data->end());
-    min = *itMinMax.first;
-    max = *itMinMax.second;
+    auto res = math::limits(*dataV, m_mask);
+    min = res.first;
+    max = res.second;
 }
 
-void Window::setData(const std::vector<double>* const data, const std::string& filename)
+void Window::setData(const mw::DataVector* const data, const std::set<int>& mask, const std::string& filename)
 {
     m_fileName = filename;
+    m_mask = mask;
     m_data = data;
-    m_dataLen = m_data->size();
+    auto elem = m_data->getElements();
+    m_dataLen = elem.size();
     getMinMaxStock(m_data, m_dataMin, m_dataMax);
 
     std::cout << "File:\t\t" << m_fileName << std::endl;
@@ -116,16 +120,29 @@ void Window::drawInfo(QPainter& painter) const
 
 void Window::drawGraph(QPainter& painter) const
 {
-    auto pen = QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-    painter.setPen(pen);
-    QPointF prev = QPointF(0, 0);
+    static const QColor colors[] = { Qt::yellow,
+        Qt::green,
+        Qt::red,
+        Qt::blue,
+        Qt::darkMagenta,
+        Qt::darkCyan,
+        Qt::black };
+
+
+    auto elem = m_data->getElements();
+    std::vector<QPointF> prev(elem[0].dataSize());
     std::size_t idx = 0;
-    for(auto x : *m_data) {
-        auto point = d2phy(std::make_pair(idx, x));
-        if(idx > 0) {
-            painter.drawLine(prev, point);
+    for(const auto& x : elem) {
+        auto v = x.getData();
+        for(const auto& m : m_mask) {
+            auto point = d2phy(std::make_pair(idx, v[m]));
+            if(idx > 0) {
+                auto pen = QPen(colors[m], 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+                painter.setPen(pen);
+                painter.drawLine(prev[m], point);
+            }
+            prev[m] = point;
         }
-        prev = point;
         ++idx;
     }
 }
