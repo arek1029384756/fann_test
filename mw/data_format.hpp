@@ -41,7 +41,7 @@ namespace mw {
         }
 
         std::size_t elementDataSize() const {
-            return m_elements[0].dataSize();
+            return m_elements.at(0).dataSize();
         }
 
         void addElement(const DataElement& elem) {

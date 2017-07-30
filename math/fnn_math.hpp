@@ -43,7 +43,7 @@ namespace math {
             std::vector<double> zero(in.elementDataSize(), 0.0);
             std::vector<double> sums = std::accumulate(elem.begin(), elem.end(), zero, [&](std::vector<double> sum, mw::DataElement v) {
                 for(std::size_t i = 0; i < zero.size(); ++i) {
-                    auto& x = sum[i];
+                    auto& x = sum.at(i);
                     x += v.getData().at(i);
                 }
                 return sum;
@@ -61,14 +61,14 @@ namespace math {
 
     class Sigma {
         public:
-        static std::vector<double> operation(const mw::DataVector& in, std::vector<double> mean) {
+        static std::vector<double> operation(const mw::DataVector& in, const std::vector<double>& mean) {
             std::cout << "sigma" << std::endl;
             auto elem = in.getElements();
             std::vector<double> zero(in.elementDataSize(), 0.0);
             std::vector<double> sums = std::accumulate(elem.begin(), elem.end(), zero, [&](std::vector<double> sum, mw::DataElement v) {
                 for(std::size_t i = 0; i < zero.size(); ++i) {
-                    auto& x = sum[i];
-                    x += std::pow(v.getData().at(i) - mean[i], 2);
+                    auto& x = sum.at(i);
+                    x += std::pow(v.getData().at(i) - mean.at(i), 2);
                 }
                 return sum;
             });

@@ -154,7 +154,7 @@ void Window::drawInfo(QPainter& painter) const
     for(const auto& m : m_mask) {
         painter.setPen(colors[m]);
         boundingRect = QRectF(QPointF(10, 10 + 32 * idx++) - sOff, QSizeF(512, 32));
-        painter.drawText(boundingRect, Qt::AlignLeft, QString(names[m].c_str()));
+        painter.drawText(boundingRect, Qt::AlignLeft, QString(names.at(m).c_str()));
     }
 }
 
@@ -166,11 +166,11 @@ void Window::drawGraph(QPainter& painter) const
     for(const auto& x : elem) {
         auto v = x.getData();
         for(const auto& m : m_mask) {
-            auto point = d2phy(std::make_pair(idx, v[m]));
+            auto point = d2phy(std::make_pair(idx, v.at(m)));
             if(idx > 0) {
                 auto pen = QPen(colors[m], 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
                 painter.setPen(pen);
-                painter.drawLine(prev[m], point);
+                painter.drawLine(prev.at(m), point);
             }
             prev[m] = point;
         }

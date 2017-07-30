@@ -43,7 +43,7 @@ namespace {
                 QApplication app(m_argc, m_argv);
                 Window graph;
                 //graph.setData(&dataV, { 1, 2, 3, 4 }, filename);
-                graph.setData(&dataV, { 1 }, filename);
+                graph.setData(&dataV, { 1, 4 }, filename);
                 graph.show();
 
                 /*Window ngraph;
