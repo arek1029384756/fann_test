@@ -9,6 +9,18 @@
 
 namespace math {
 
+    template<class Oper, class... TArgs>
+    auto compute(TArgs&... args) {
+        try {
+            return Oper::operation(args...);
+        } catch(const std::out_of_range& e) {
+            throw std::runtime_error(
+                std::string("[1] Chosen dataset index exceeds range. ") +
+                std::string("Maybe your input file lacks some columns? '") +
+                    e.what() + std::string("'"));
+        }
+    }
+
     class Limits {
         public:
         static std::pair<double, double> operation(const mw::DataVector& in, const std::set<int>& mask) {
@@ -33,7 +45,6 @@ namespace math {
             return std::make_pair(min, max);
         }
     };
-
 
     class Mean {
         public:
@@ -84,17 +95,25 @@ namespace math {
         }
     };
 
-    template<class Oper, class... TArgs>
-    auto compute(TArgs&... args) {
-        try {
-            return Oper::operation(args...);
-        } catch(const std::out_of_range& e) {
-            throw std::runtime_error(
-                std::string("[1] Chosen dataset index exceeds range. ") +
-                std::string("Maybe your input file lacks some columns? '") +
-                    e.what() + std::string("'"));
+    class GaussNorm {
+        public:
+        static int operation(const mw::DataVector& in, mw::DataVector& out) {
+            std::cout << "gauss" << std::endl;
+            auto m = compute<Mean>(in);
+            auto s = compute<Sigma>(in, m);
+            auto elem = in.getElements();
+            for(const auto& x : elem) {
+                mw::DataElement el;
+                auto v = x.getData();
+                for(std::size_t i = 0; i < v.size(); ++i) {
+                    el.addData((v.at(i) - m.at(i)) / s.at(i));
+                }
+                out.addElement(el);
+            }
+            return 0;
         }
-    }
+    };
+
 }
 
 #endif

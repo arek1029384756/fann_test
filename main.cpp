@@ -3,6 +3,7 @@
 #include <window.h>
 #include <file_reader.hpp>
 #include <parser_csv.hpp>
+#include <fnn_math.hpp>
 
 namespace {
     class App {
@@ -27,18 +28,6 @@ namespace {
 
                 auto dataV = parser.getData();
                 //dataV.print();
-                //auto m = math::mean(dataV);
-                //auto s = math::sigma(dataV, m);
-
-                //ctmp
-                /*std::vector<double> data;
-                std::vector<double> ndata;
-                for(const auto& x : dataV.getElements()) {
-                    auto v = x.getData();
-                    ndata.emplace_back((v[0] - m[0]) / s[0]);
-                    data.emplace_back(v[0]);
-                }*/
-                //
 
                 QApplication app(m_argc, m_argv);
                 Window graph;
@@ -46,9 +35,14 @@ namespace {
                 graph.setData(&dataV, { 1, 4 }, filename);
                 graph.show();
 
-                /*Window ngraph;
-                ngraph.setData(&ndata, "Norm");
-                ngraph.show();*/
+
+                mw::DataVector dataVNorm;
+                dataVNorm.setNames(dataV.getNames());
+                math::compute<math::GaussNorm>(dataV, dataVNorm);
+                //dataVNorm.print();
+                Window ngraph;
+                ngraph.setData(&dataVNorm, { 1, 4 }, "Gaussian normalisation");
+                ngraph.show();
 
                 return app.exec();
             } catch(const std::exception& e) {

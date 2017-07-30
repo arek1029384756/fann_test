@@ -52,6 +52,10 @@ namespace mw {
             m_names.emplace_back(name);
         }
 
+        void setNames(const std::vector<std::string>& names) {
+            m_names = names;
+        }
+
         void print() {
             for(const auto& n : m_names) {
                 std::cout << n << "\t";
