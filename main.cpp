@@ -46,11 +46,11 @@ namespace {
 
                 return app.exec();
             } catch(const std::exception& e) {
-                std::cout << "Exception raised:" << std::endl;
-                std::cout << e.what() << std::endl;
+                std::cerr << "\033[0;31mException raised:" << std::endl;
+                std::cerr << e.what() << "\033[0m" << std::endl;
                 return EXIT_FAILURE;
             } catch(...) {
-                std::cout << "Unknown exception! Something really bad happened"
+                std::cerr << "\033[0;31mUnknown exception! Something really bad happened\033[0m"
                     << std::endl;
                 return EXIT_FAILURE;
             }
