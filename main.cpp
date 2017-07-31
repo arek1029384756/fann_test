@@ -26,7 +26,7 @@ namespace {
                 const std::string filename = (m_argc > 1) ? m_argv[1] : "<empty>";
                 freader.readFile(filename);
 
-                auto dataV = parser.getData();
+                auto& dataV = parser.getData();
                 //dataV.print();
 
                 QApplication app(m_argc, m_argv);

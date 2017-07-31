@@ -25,12 +25,12 @@ namespace math {
         public:
         static std::pair<double, double> operation(const mw::DataVector& in, const std::set<int>& mask) {
             std::cout << "limits" << std::endl;
-            auto elem = in.getElements();
+            auto& elem = in.getElements();
             double min = std::numeric_limits<double>::max();
             double max = std::numeric_limits<double>::lowest();
 
             std::for_each(elem.begin(), elem.end(), [&](const mw::DataElement& el) {
-                    auto d = el.getData();
+                    auto& d = el.getData();
                     for(const auto& m : mask) {
                         auto val = d.at(m);
                         if(val < min) {
@@ -50,9 +50,9 @@ namespace math {
         public:
         static std::vector<double> operation(const mw::DataVector& in) {
             std::cout << "mean" << std::endl;
-            auto elem = in.getElements();
+            auto& elem = in.getElements();
             std::vector<double> zero(in.elementDataSize(), 0.0);
-            std::vector<double> sums = std::accumulate(elem.begin(), elem.end(), zero, [&](std::vector<double> sum, mw::DataElement v) {
+            std::vector<double> sums = std::accumulate(elem.begin(), elem.end(), zero, [&](std::vector<double>& sum, const mw::DataElement& v) {
                 for(std::size_t i = 0; i < zero.size(); ++i) {
                     auto& x = sum.at(i);
                     x += v.getData().at(i);
@@ -74,9 +74,9 @@ namespace math {
         public:
         static std::vector<double> operation(const mw::DataVector& in, const std::vector<double>& mean) {
             std::cout << "sigma" << std::endl;
-            auto elem = in.getElements();
+            auto& elem = in.getElements();
             std::vector<double> zero(in.elementDataSize(), 0.0);
-            std::vector<double> sums = std::accumulate(elem.begin(), elem.end(), zero, [&](std::vector<double> sum, mw::DataElement v) {
+            std::vector<double> sums = std::accumulate(elem.begin(), elem.end(), zero, [&](std::vector<double>& sum, const mw::DataElement& v) {
                 for(std::size_t i = 0; i < zero.size(); ++i) {
                     auto& x = sum.at(i);
                     x += std::pow(v.getData().at(i) - mean.at(i), 2);
@@ -101,10 +101,10 @@ namespace math {
             std::cout << "gauss" << std::endl;
             auto m = compute<Mean>(in);
             auto s = compute<Sigma>(in, m);
-            auto elem = in.getElements();
+            auto& elem = in.getElements();
             for(const auto& x : elem) {
                 mw::DataElement el;
-                auto v = x.getData();
+                auto& v = x.getData();
                 for(std::size_t i = 0; i < v.size(); ++i) {
                     el.addData((v.at(i) - m.at(i)) / s.at(i));
                 }

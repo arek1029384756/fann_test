@@ -63,7 +63,7 @@ namespace mw {
             std::cout << std::endl;
 
             for(const auto& el : m_elements) {
-                auto v = el.getData();
+                auto& v = el.getData();
                 for(auto val : v) {
                     std::cout << val << "\t\t";
                 }

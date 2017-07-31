@@ -43,10 +43,10 @@ void Window::getMinMaxStock(double& min, double& max) const
 void Window::testDataPresence() const {
     try {
         std::cout << "Test of data presence on vector 0" << std::endl;
-        auto names = m_dataV->getNames();
-        auto elem = m_dataV->getElements();
+        auto& names = m_dataV->getNames();
+        auto& elem = m_dataV->getElements();
         for(const auto& m : m_mask) {
-            auto data = elem.at(0).getData();
+            auto& data = elem.at(0).getData();
             auto name = names.at(m);
             auto val = data.at(m);
             std::cout << "#" << m << ": " << name << "  " << val << std::endl;
@@ -65,7 +65,7 @@ void Window::setData(const mw::DataVector* const dataV, const std::set<int>& mas
     m_fileName = filename;
     m_mask = mask;
     m_dataV = dataV;
-    auto elem = m_dataV->getElements();
+    auto& elem = m_dataV->getElements();
     m_dataLen = elem.size();
 
     testDataPresence();
@@ -150,7 +150,7 @@ void Window::drawInfo(QPainter& painter) const
     painter.drawText(boundingRect, Qt::AlignLeft, QString(m_fileName.c_str()));
 
     std::size_t idx = 1;
-    auto names = m_dataV->getNames();
+    auto& names = m_dataV->getNames();
     for(const auto& m : m_mask) {
         painter.setPen(colors[m]);
         boundingRect = QRectF(QPointF(10, 10 + 32 * idx++) - sOff, QSizeF(512, 32));
@@ -161,10 +161,10 @@ void Window::drawInfo(QPainter& painter) const
 void Window::drawGraph(QPainter& painter) const
 {
     std::vector<QPointF> prev(m_dataV->elementDataSize());
-    auto elem = m_dataV->getElements();
+    auto& elem = m_dataV->getElements();
     std::size_t idx = 0;
     for(const auto& x : elem) {
-        auto v = x.getData();
+        auto& v = x.getData();
         for(const auto& m : m_mask) {
             auto point = d2phy(std::make_pair(idx, v.at(m)));
             if(idx > 0) {
