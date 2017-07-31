@@ -8,13 +8,13 @@
 #include "window.h"
 
 namespace {
-    static const QColor colors[] = { Qt::yellow,
+    static const QColor colors[] = { Qt::black,
         Qt::darkGreen,
         Qt::red,
         Qt::blue,
         Qt::darkMagenta,
         Qt::darkCyan,
-        Qt::black };
+        Qt::yellow};
 }
 
 Window::Window(QWidget *parent)
