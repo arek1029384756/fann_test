@@ -21,6 +21,9 @@ namespace {
 
         int run() {
             try {
+                QApplication app(m_argc, m_argv);
+                std::setlocale(LC_NUMERIC, "C");
+
                 parsers::ParserCSV parser;
                 file_reader::FileReader<parsers::ParserCSV> freader(&parser);
                 const std::string filename = (m_argc > 1) ? m_argv[1] : "<empty>";
@@ -30,7 +33,6 @@ namespace {
                 //dataV.print();
                 std::set<int> mask = { 1, 4 };
 
-                QApplication app(m_argc, m_argv);
                 Window graph;
                 graph.setData(&dataV, mask, filename);
                 graph.show();
