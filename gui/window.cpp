@@ -60,9 +60,9 @@ void Window::testDataPresence() const {
     }
 }
 
-void Window::setData(const mw::DataVector* const dataV, const std::set<int>& mask, const std::string& filename)
+void Window::setData(const mw::DataVector* const dataV, const std::set<int>& mask, const std::string& graphName)
 {
-    m_fileName = filename;
+    m_graphName = graphName;
     m_mask = mask;
     m_dataV = dataV;
     auto& elem = m_dataV->getElements();
@@ -71,7 +71,7 @@ void Window::setData(const mw::DataVector* const dataV, const std::set<int>& mas
     testDataPresence();
     getMinMaxStock(m_dataMin, m_dataMax);
 
-    std::cout << "File:\t\t" << m_fileName << std::endl;
+    std::cout << "File:\t\t" << m_graphName << std::endl;
     std::cout << "Data length:\t" << m_dataLen << std::endl;
     std::cout << "Data max:\t" << m_dataMax << std::endl;
     std::cout << "Data min:\t" << m_dataMin << std::endl << std::endl;
@@ -147,7 +147,7 @@ void Window::drawInfo(QPainter& painter) const
     painter.setFont(QFont("Courier New", 18, QFont::Bold));
     auto boundingRect = QRectF(QPointF(10, 10) - sOff, QSizeF(512, 32));
     painter.setPen(Qt::black);
-    painter.drawText(boundingRect, Qt::AlignLeft, QString(m_fileName.c_str()));
+    painter.drawText(boundingRect, Qt::AlignLeft, QString(m_graphName.c_str()));
 
     std::size_t idx = 1;
     auto& names = m_dataV->getNames();

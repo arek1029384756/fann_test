@@ -27,7 +27,7 @@ class Window : public QWidget
 
     static constexpr auto YSIZE = szY / YCNT;
 
-    std::string m_fileName; 
+    std::string m_graphName;
 
     std::size_t m_dataLen;
 
@@ -64,7 +64,7 @@ class Window : public QWidget
 
     public:
         Window(QWidget *parent = 0);
-        void setData(const mw::DataVector* const dataV, const std::set<int>& mask, const std::string& filename);
+        void setData(const mw::DataVector* const dataV, const std::set<int>& mask, const std::string& graphName);
 
     protected:
         void paintEvent(QPaintEvent *event) override;
