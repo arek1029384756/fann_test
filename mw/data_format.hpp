@@ -1,6 +1,7 @@
 #ifndef DATA_FORMAT
 #define DATA_FORMAT
 
+#include <algorithm>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -21,8 +22,59 @@ namespace mw {
             m_data.emplace_back(d);
         }
 
+        double dataAt(std::size_t idx) const {
+            return m_data.at(idx);
+        }
+
         std::size_t dataSize() const {
             return m_data.size();
+        }
+
+        void print() const {
+            auto& v = getData();
+            for(auto val : v) {
+                std::cout << val << "\t\t";
+            }
+            std::cout << std::endl;
+        }
+
+        DataElement operator-(const DataElement& other) const {
+            DataElement el;
+            for(std::size_t i = 0; i < std::min(dataSize(), other.dataSize()); ++i) {
+                el.addData(dataAt(i) - other.dataAt(i));
+            }
+            return el;
+        }
+    };
+
+    template<typename TDataVector, typename TElement>
+    class DataChunk {
+        const TDataVector* m_dataV;
+        std::size_t m_idxFirst;
+        std::size_t m_idxLast;
+        typename std::vector<TElement>::const_iterator m_first;
+        typename std::vector<TElement>::const_iterator m_last;
+
+        public:
+        DataChunk(const TDataVector* const dataV, std::size_t first, std::size_t last)
+            : m_dataV(dataV),
+            m_idxFirst(first),
+            m_idxLast(last),
+            m_first(std::next(m_dataV->getElements().cbegin(), first)),
+            m_last(std::next(m_dataV->getElements().cbegin(), last)) {
+        }
+
+        TElement getDiff() const {
+            auto& elements = m_dataV->getElements();
+            return elements.at(m_idxLast) - elements.at(m_idxFirst);
+        }
+
+        void print() const {
+            std::cout << "Chunk[" << m_idxFirst << ", " << m_idxLast << "]" << std::endl;
+            for(auto it = m_first; it != std::next(m_last, 1); std::advance(it, 1)) {
+                it->print();
+            }
+            std::cout << std::endl;
         }
     };
 
@@ -32,6 +84,8 @@ namespace mw {
         std::vector<DataElement> m_elements;
 
         public:
+        typedef DataChunk<DataVector, DataElement> DVChunk;
+
         const std::vector<DataElement>& getElements() const {
             return m_elements;
         }
@@ -56,21 +110,47 @@ namespace mw {
             m_names = names;
         }
 
-        void print() {
+        void print() const {
             for(const auto& n : m_names) {
                 std::cout << n << "\t";
             }
             std::cout << std::endl;
 
             for(const auto& el : m_elements) {
-                auto& v = el.getData();
-                for(auto val : v) {
-                    std::cout << val << "\t\t";
-                }
-                std::cout << std::endl;
+                el.print();
             }
         }
+
+        DVChunk getChunk(std::size_t first, std::size_t last) const {
+            return DVChunk(this, first, last);
+        }
     };
+
+    class AnnVector {
+        DataVector::DVChunk m_input;
+        DataVector::DVChunk m_output;
+
+        public:
+        AnnVector(const DataVector::DVChunk& input, const DataVector::DVChunk& output)
+            : m_input(input), m_output(output) {
+        }
+
+        const DataVector::DVChunk input() const {
+            return m_input;
+        }
+
+        const DataVector::DVChunk output() const {
+            return m_output;
+        }
+
+        void print() const {
+            std::cout << std::endl << "Input ";
+            m_input.print();
+            std::cout << std::endl << "Output ";
+            m_output.print();
+        }
+    };
+
 }
 
 #endif

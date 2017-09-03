@@ -24,24 +24,35 @@ namespace {
                 QApplication app(m_argc, m_argv);
                 std::setlocale(LC_NUMERIC, "C");
 
+                const std::string filename = (m_argc > 1) ? m_argv[1] : "<empty>";
+
                 parsers::ParserCSV parser;
                 file_reader::FileReader<parsers::ParserCSV> freader(&parser);
-                const std::string filename = (m_argc > 1) ? m_argv[1] : "<empty>";
                 freader.readFile(filename);
 
                 auto& dataV = parser.getData();
                 //dataV.print();
+
+                auto inp = dataV.getChunk(10, 15);
+                auto out = dataV.getChunk(16, 18);
+                auto trainV = mw::AnnVector(inp, out);
+                trainV.print();
+
+                auto diff = inp.getDiff();
+                diff.print();
+
+
                 std::set<int> mask = { 1, 4 };
-
-                Window graph;
-                graph.setData(&dataV, mask, filename);
-                graph.show();
-
 
                 mw::DataVector dataVNorm;
                 dataVNorm.setNames(dataV.getNames());
                 math::compute<math::GaussNorm>(dataV, dataVNorm, mask);
                 //dataVNorm.print();
+
+                Window graph;
+                graph.setData(&dataV, mask, filename);
+                graph.show();
+
                 Window ngraph;
                 ngraph.setData(&dataVNorm, mask, "Gaussian normalisation");
                 ngraph.show();
