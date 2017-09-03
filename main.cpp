@@ -28,20 +28,20 @@ namespace {
 
                 auto& dataV = parser.getData();
                 //dataV.print();
+                std::set<int> mask = { 1, 4 };
 
                 QApplication app(m_argc, m_argv);
                 Window graph;
-                //graph.setData(&dataV, { 1, 2, 3, 4 }, filename);
-                graph.setData(&dataV, { 1, 4 }, filename);
+                graph.setData(&dataV, mask, filename);
                 graph.show();
 
 
                 mw::DataVector dataVNorm;
                 dataVNorm.setNames(dataV.getNames());
-                math::compute<math::GaussNorm>(dataV, dataVNorm);
+                math::compute<math::GaussNorm>(dataV, dataVNorm, mask);
                 //dataVNorm.print();
                 Window ngraph;
-                ngraph.setData(&dataVNorm, { 1, 4 }, "Gaussian normalisation");
+                ngraph.setData(&dataVNorm, mask, "Gaussian normalisation");
                 ngraph.show();
 
                 return app.exec();

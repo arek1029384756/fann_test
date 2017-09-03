@@ -48,14 +48,14 @@ namespace math {
 
     class Mean {
         public:
-        static std::vector<double> operation(const mw::DataVector& in) {
+        static std::vector<double> operation(const mw::DataVector& in, const std::set<int>& mask) {
             std::cout << "mean" << std::endl;
             auto& elem = in.getElements();
             std::vector<double> zero(in.elementDataSize(), 0.0);
             std::vector<double> sums = std::accumulate(elem.begin(), elem.end(), zero, [&](std::vector<double>& sum, const mw::DataElement& v) {
-                for(std::size_t i = 0; i < zero.size(); ++i) {
-                    auto& x = sum.at(i);
-                    x += v.getData().at(i);
+                for(const auto& m : mask) {
+                    auto& x = sum.at(m);
+                    x += v.getData().at(m);
                 }
                 return sum;
             });
@@ -72,14 +72,14 @@ namespace math {
 
     class Sigma {
         public:
-        static std::vector<double> operation(const mw::DataVector& in, const std::vector<double>& mean) {
+        static std::vector<double> operation(const mw::DataVector& in, const std::vector<double>& mean, const std::set<int>& mask) {
             std::cout << "sigma" << std::endl;
             auto& elem = in.getElements();
             std::vector<double> zero(in.elementDataSize(), 0.0);
             std::vector<double> sums = std::accumulate(elem.begin(), elem.end(), zero, [&](std::vector<double>& sum, const mw::DataElement& v) {
-                for(std::size_t i = 0; i < zero.size(); ++i) {
-                    auto& x = sum.at(i);
-                    x += std::pow(v.getData().at(i) - mean.at(i), 2);
+                for(const auto& m : mask) {
+                    auto& x = sum.at(m);
+                    x += std::pow(v.getData().at(m) - mean.at(m), 2);
                 }
                 return sum;
             });
@@ -97,16 +97,16 @@ namespace math {
 
     class GaussNorm {
         public:
-        static int operation(const mw::DataVector& in, mw::DataVector& out) {
+        static int operation(const mw::DataVector& in, mw::DataVector& out, const std::set<int>& mask) {
             std::cout << "gauss" << std::endl;
-            auto m = compute<Mean>(in);
-            auto s = compute<Sigma>(in, m);
+            auto mean = compute<Mean>(in, mask);
+            auto sigma = compute<Sigma>(in, mean, mask);
             auto& elem = in.getElements();
             for(const auto& x : elem) {
                 mw::DataElement el;
                 auto& v = x.getData();
                 for(std::size_t i = 0; i < v.size(); ++i) {
-                    el.addData((v.at(i) - m.at(i)) / s.at(i));
+                    el.addData((v.at(i) - mean.at(i)) / sigma.at(i));
                 }
                 out.addElement(el);
             }
