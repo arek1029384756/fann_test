@@ -3,9 +3,16 @@
 
 namespace gui {
 
-    class GuiInterface {
+    class GuiGraphInterfaceExt {
         public:
+        virtual void foo() = 0;
     };
+
+    class GuiGraphInterfaceInt {
+        public:
+        virtual void bar() = 0;
+    };
+
 }
 
 #endif

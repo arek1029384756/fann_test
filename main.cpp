@@ -1,6 +1,6 @@
 #include <QApplication>
 #include <iostream>
-#include <window.h>
+#include <gui_qt.hpp>
 #include <file_reader.hpp>
 #include <parser_csv.hpp>
 #include <fnn_math.hpp>
@@ -49,6 +49,11 @@ namespace {
                 math::compute<math::GaussNorm>(dataV, dataVNorm, mask);
                 //dataVNorm.print();
 
+                std::unique_ptr<gui::GuiGraphInterfaceExt> pG(new gui::GuiGraphQt());
+                pG->foo();
+
+
+#if 0
                 gui::Window graph;
                 graph.setData(&dataV, mask, std::string("Raw: ") + filename);
                 graph.show();
@@ -56,6 +61,7 @@ namespace {
                 gui::Window ngraph;
                 ngraph.setData(&dataVNorm, mask, std::string("Gauss: ") + filename);
                 ngraph.show();
+#endif
 
                 return app.exec();
             } catch(const std::exception& e) {

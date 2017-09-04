@@ -21,12 +21,13 @@ namespace gui {
         };
     }
 
-    Window::Window(QWidget *parent)
-        : QWidget(parent), m_dataV(0) {
+    Window::Window(GuiGraphInterfaceInt* ifc, QWidget* parent)
+        : QWidget(parent), m_ifc(ifc), m_dataV(0) {
         setWindowTitle(tr("FANN test"));
         setStyleSheet("background-color:lightGray;");
         resize(1024, 512);
 
+        m_ifc->bar();
         //QTimer::singleShot(100, this, SLOT(updateData()));
     }
 
@@ -171,9 +172,10 @@ namespace gui {
         initPainter(painter);
 
         drawGrid(painter);
-        drawAxis(painter);
-        drawGraph(painter);
-        drawScale(painter);
-        drawInfo(painter);
+        //Commented-out until interface is implemented
+        //drawAxis(painter);
+        //drawGraph(painter);
+        //drawScale(painter);
+        //drawInfo(painter);
     }
 }

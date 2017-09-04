@@ -6,6 +6,7 @@
 #include <memory>
 #include <set>
 #include <data_format.hpp>
+#include <gui_interface.hpp>
 //#include <exception>
 //#include <stdexcept>    //covering g++ version differences
 
@@ -27,6 +28,9 @@ namespace gui {
         static constexpr auto XSIZE = szX / XCNT;
 
         static constexpr auto YSIZE = szY / YCNT;
+
+
+        GuiGraphInterfaceInt* m_ifc;
 
         std::string m_graphName;
 
@@ -64,7 +68,7 @@ namespace gui {
         void updateData();
 
         public:
-        Window(QWidget *parent = 0);
+        Window(GuiGraphInterfaceInt* ifc, QWidget* parent = 0);
         void setData(const mw::DataVector* const dataV, const std::set<int>& mask, const std::string& graphName);
 
         protected:
