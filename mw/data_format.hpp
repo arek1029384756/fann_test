@@ -90,6 +90,10 @@ namespace mw {
             return m_elements;
         }
 
+        std::size_t getElementsSize() const {
+            return m_elements.size();
+        }
+
         const std::vector<std::string>& getNames() const {
             return m_names;
         }

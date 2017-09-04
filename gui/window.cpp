@@ -65,8 +65,7 @@ void Window::setData(const mw::DataVector* const dataV, const std::set<int>& mas
     m_graphName = graphName;
     m_mask = mask;
     m_dataV = dataV;
-    auto& elem = m_dataV->getElements();
-    m_dataLen = elem.size();
+    m_dataLen = m_dataV->getElementsSize();
 
     testDataPresence();
     getMinMaxStock(m_dataMin, m_dataMax);
