@@ -14,7 +14,7 @@ LOCAL_QT5_INC =
 
 LOCAL_QT5_LIB = $$LOCAL_QT5_PFX
 INCLUDEPATH += .
-INCLUDEPATH += ./mw ./math ./file_io ./parser ./gui /usr/include/$$LOCAL_QT5_INC/qt5/QtWidgets
+INCLUDEPATH += ./mw ./math ./file_io ./parser ./gui ./gui_qt /usr/include/$$LOCAL_QT5_INC/qt5/QtWidgets
 QMAKE_CXXFLAGS += -Wextra -pedantic -std=c++1y
 LIBS += -L/usr/lib/$$LOCAL_QT5_LIB -lQt5Widgets
 
@@ -24,7 +24,7 @@ math/fnn_math.hpp \
 file_io/file_reader.hpp \
 parser/parser_csv.hpp \
 parser/parser_interface.hpp \
-gui/window.h
+gui_qt/window.h
 
 SOURCES += main.cpp \
-gui/window.cpp
+gui_qt/window.cpp
