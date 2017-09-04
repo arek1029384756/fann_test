@@ -49,12 +49,12 @@ namespace {
                 math::compute<math::GaussNorm>(dataV, dataVNorm, mask);
                 //dataVNorm.print();
 
-                Window graph;
-                graph.setData(&dataV, mask, filename);
+                gui::Window graph;
+                graph.setData(&dataV, mask, std::string("Raw: ") + filename);
                 graph.show();
 
-                Window ngraph;
-                ngraph.setData(&dataVNorm, mask, "Gaussian normalisation");
+                gui::Window ngraph;
+                ngraph.setData(&dataVNorm, mask, std::string("Gauss: ") + filename);
                 ngraph.show();
 
                 return app.exec();
@@ -76,4 +76,3 @@ int main(int argc, char** argv) {
     App a(argc, argv);
     return a.run();
 }
-
