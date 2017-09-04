@@ -43,12 +43,10 @@ void Window::getMinMaxStock(double& min, double& max) const
 void Window::testDataPresence() const {
     try {
         std::cout << "Test of data presence on vector 0" << std::endl;
-        auto& names = m_dataV->getNames();
-        auto& elem = m_dataV->getElements();
+        auto& element = m_dataV->getElementAt(0);
         for(const auto& m : m_mask) {
-            auto& data = elem.at(0).getData();
-            auto name = names.at(m);
-            auto val = data.at(m);
+            auto name = m_dataV->getNameAt(m);
+            auto val = element.dataAt(m);
             std::cout << "#" << m << ": " << name << "  " << val << std::endl;
         }
         std::cout << std::endl;
@@ -149,11 +147,11 @@ void Window::drawInfo(QPainter& painter) const
     painter.drawText(boundingRect, Qt::AlignLeft, QString(m_graphName.c_str()));
 
     std::size_t idx = 1;
-    auto& names = m_dataV->getNames();
     for(const auto& m : m_mask) {
         painter.setPen(colors[m]);
         boundingRect = QRectF(QPointF(10, 10 + 32 * idx++) - sOff, QSizeF(512, 32));
-        painter.drawText(boundingRect, Qt::AlignLeft, QString(names.at(m).c_str()));
+        auto name = m_dataV->getNameAt(m);
+        painter.drawText(boundingRect, Qt::AlignLeft, QString(name.c_str()));
     }
 }
 
@@ -163,9 +161,8 @@ void Window::drawGraph(QPainter& painter) const
     auto& elem = m_dataV->getElements();
     std::size_t idx = 0;
     for(const auto& x : elem) {
-        auto& v = x.getData();
         for(const auto& m : m_mask) {
-            auto point = d2phy(std::make_pair(idx, v.at(m)));
+            auto point = d2phy(std::make_pair(idx, x.dataAt(m)));
             if(idx > 0) {
                 auto pen = QPen(colors[m], 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
                 painter.setPen(pen);

@@ -30,9 +30,8 @@ namespace math {
             double max = std::numeric_limits<double>::lowest();
 
             std::for_each(elem.begin(), elem.end(), [&](const mw::DataElement& el) {
-                    auto& d = el.getData();
                     for(const auto& m : mask) {
-                        auto val = d.at(m);
+                        auto val = el.dataAt(m);
                         if(val < min) {
                             min = val;
                         }
@@ -55,7 +54,7 @@ namespace math {
             std::vector<double> sums = std::accumulate(elem.begin(), elem.end(), zero, [&](std::vector<double>& sum, const mw::DataElement& v) {
                 for(const auto& m : mask) {
                     auto& x = sum.at(m);
-                    x += v.getData().at(m);
+                    x += v.dataAt(m);
                 }
                 return sum;
             });
@@ -79,7 +78,7 @@ namespace math {
             std::vector<double> sums = std::accumulate(elem.begin(), elem.end(), zero, [&](std::vector<double>& sum, const mw::DataElement& v) {
                 for(const auto& m : mask) {
                     auto& x = sum.at(m);
-                    x += std::pow(v.getData().at(m) - mean.at(m), 2);
+                    x += std::pow(v.dataAt(m) - mean.at(m), 2);
                 }
                 return sum;
             });

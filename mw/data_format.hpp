@@ -94,8 +94,16 @@ namespace mw {
             return m_elements.size();
         }
 
+        const DataElement& getElementAt(std::size_t idx) const {
+            return m_elements.at(idx);
+        }
+
         const std::vector<std::string>& getNames() const {
             return m_names;
+        }
+
+        const std::string& getNameAt(std::size_t idx) const {
+            return m_names.at(idx);
         }
 
         std::size_t elementDataSize() const {
