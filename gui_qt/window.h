@@ -9,65 +9,67 @@
 //#include <exception>
 //#include <stdexcept>    //covering g++ version differences
 
-class Window : public QWidget
-{
-    Q_OBJECT
+namespace gui {
 
-    static constexpr double szX = 2048.0;
+    class Window : public QWidget {
+        Q_OBJECT
 
-    static constexpr double szY = 1024.0;
+        static constexpr double szX = 2048.0;
 
-    static constexpr auto sOff = QPointF(szX / 2, szY / 2);
+        static constexpr double szY = 1024.0;
 
-    static constexpr int XCNT = 32;
+        static constexpr auto sOff = QPointF(szX / 2, szY / 2);
 
-    static constexpr int YCNT = 16;
+        static constexpr int XCNT = 32;
 
-    static constexpr auto XSIZE = szX / XCNT;
+        static constexpr int YCNT = 16;
 
-    static constexpr auto YSIZE = szY / YCNT;
+        static constexpr auto XSIZE = szX / XCNT;
 
-    std::string m_graphName;
+        static constexpr auto YSIZE = szY / YCNT;
 
-    std::size_t m_dataLen;
+        std::string m_graphName;
 
-    double m_dataMax;
+        std::size_t m_dataLen;
 
-    double m_dataMin;
+        double m_dataMax;
 
-    const mw::DataVector* m_dataV;
+        double m_dataMin;
 
-    std::set<int> m_mask;
+        const mw::DataVector* m_dataV;
 
-    void getMinMaxStock(double& min, double& max) const;
+        std::set<int> m_mask;
 
-    void testDataPresence() const;
+        void getMinMaxStock(double& min, double& max) const;
 
-    QPointF d2phy(const std::pair<std::size_t, double>& d) const;
+        void testDataPresence() const;
 
-    std::pair<std::size_t, double> phy2d(const QPointF& point) const;
+        QPointF d2phy(const std::pair<std::size_t, double>& d) const;
 
-    void initPainter(QPainter& painter) const;
+        std::pair<std::size_t, double> phy2d(const QPointF& point) const;
 
-    void drawGrid(QPainter& painter) const;
+        void initPainter(QPainter& painter) const;
 
-    void drawAxis(QPainter& painter) const;
+        void drawGrid(QPainter& painter) const;
 
-    void drawInfo(QPainter& painter) const;
+        void drawAxis(QPainter& painter) const;
 
-    void drawScale(QPainter& painter) const;
+        void drawInfo(QPainter& painter) const;
 
-    void drawGraph(QPainter& painter) const;
+        void drawScale(QPainter& painter) const;
 
-    public slots:
+        void drawGraph(QPainter& painter) const;
+
+        public slots:
         void updateData();
 
-    public:
+        public:
         Window(QWidget *parent = 0);
         void setData(const mw::DataVector* const dataV, const std::set<int>& mask, const std::string& graphName);
 
-    protected:
+        protected:
         void paintEvent(QPaintEvent *event) override;
-};
+    };
+}
 
 #endif
