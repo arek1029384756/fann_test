@@ -94,7 +94,7 @@ namespace gui {
         for(std::size_t j = 1; j < YCNT; ++j) {
             auto pointB = QPointF(szX, j * YSIZE) - sOff;
             auto v = phy2d(pointB);
-            auto boundingRect = QRectF(pointB - QPointF(128, 12), QSizeF(128, 24));
+            auto boundingRect = QRectF(pointB - QPointF(256, 12), QSizeF(256, 24));
             painter.setFont(QFont("Courier New", 14, QFont::Bold));
             auto s = QString::number(v.second, 'f', 2);
             painter.drawText(boundingRect, Qt::AlignRight | Qt::AlignVCenter, s);
@@ -107,7 +107,7 @@ namespace gui {
         auto& dataV = m_ifc->dataVector();
 
         painter.setFont(QFont("Courier New", 18, QFont::Bold));
-        auto boundingRect = QRectF(QPointF(10, 10) - sOff, QSizeF(512, 32));
+        auto boundingRect = QRectF(QPointF(10, 10) - sOff, QSizeF(768, 32));
         painter.setPen(Qt::black);
         painter.drawText(boundingRect, Qt::AlignLeft, QString(graphName.c_str()));
 
