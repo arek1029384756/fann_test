@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <iostream>
 #include <gui_graph_qt.hpp>
+#include <gui_progress_qt.hpp>
 #include <file_reader.hpp>
 #include <parser_csv.hpp>
 #include <fnn_math.hpp>
@@ -56,6 +57,9 @@ namespace {
                 std::unique_ptr<gui::GuiGraphInterfaceExt> pGraphGauss(new gui::GuiGraphQt());
                 pGraphGauss->setData(&dataVNorm, mask, std::string("Gauss: ") + filename);
                 pGraphGauss->show();
+
+                std::unique_ptr<gui::GuiProgressInterfaceExt> pProgress(new gui::GuiProgressQt());
+                pProgress->show();
 
                 return app.exec();
             } catch(const std::exception& e) {

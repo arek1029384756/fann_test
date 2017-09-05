@@ -26,7 +26,11 @@ parser/parser_csv.hpp \
 parser/parser_interface.hpp \
 gui/gui_graph_interface.hpp \
 gui/gui_graph_qt.hpp \
+gui/gui_progress_interface.hpp \
+gui/gui_progress_qt.hpp \
+gui_qt/progress_qt.h \
 gui_qt/graph_qt.h
 
 SOURCES += main.cpp \
+gui_qt/progress_qt.cpp \
 gui_qt/graph_qt.cpp
