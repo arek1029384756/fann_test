@@ -1,6 +1,6 @@
 #include <QApplication>
 #include <iostream>
-#include <gui_qt.hpp>
+#include <gui_graph_qt.hpp>
 #include <file_reader.hpp>
 #include <parser_csv.hpp>
 #include <fnn_math.hpp>

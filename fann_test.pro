@@ -24,9 +24,9 @@ math/fnn_math.hpp \
 file_io/file_reader.hpp \
 parser/parser_csv.hpp \
 parser/parser_interface.hpp \
-gui/gui_interface.hpp \
-gui/gui_qt.hpp \
-gui_qt/window.h
+gui/gui_graph_interface.hpp \
+gui/gui_graph_qt.hpp \
+gui_qt/graph_qt.h
 
 SOURCES += main.cpp \
-gui_qt/window.cpp
+gui_qt/graph_qt.cpp

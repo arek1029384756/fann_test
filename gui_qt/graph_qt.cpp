@@ -1,8 +1,8 @@
 #include <QtWidgets>
 #include <iostream>
-#include "window.h"
+#include "graph_qt.h"
 
-namespace gui {
+namespace gui_qt {
 
     namespace {
         static const QColor colors[] = {
@@ -16,7 +16,7 @@ namespace gui {
         };
     }
 
-    Window::Window(GuiGraphInterfaceInt* ifc, QWidget* parent)
+    GraphQt::GraphQt(gui::GuiGraphInterfaceInt* ifc, QWidget* parent)
         : QWidget(parent), m_ifc(ifc) {
         setWindowTitle(tr("FANN test"));
         setStyleSheet("background-color:lightGray;");
@@ -25,12 +25,12 @@ namespace gui {
         //QTimer::singleShot(100, this, SLOT(updateData()));
     }
 
-    void Window::updateData() {
+    void GraphQt::updateData() {
         update();
         //QTimer::singleShot(1000, this, SLOT(updateData()));
     }
 
-    QPointF Window::d2phy(const std::pair<std::size_t, double>& d) const {
+    QPointF GraphQt::d2phy(const std::pair<std::size_t, double>& d) const {
         auto dataLen = m_ifc->graphDataLength();
         auto dataMax = m_ifc->graphDataMax();
         auto dataMin = m_ifc->graphDataMin();
@@ -41,7 +41,7 @@ namespace gui {
         return p - sOff;
     }
 
-    std::pair<std::size_t, double> Window::phy2d(const QPointF& point) const {
+    std::pair<std::size_t, double> GraphQt::phy2d(const QPointF& point) const {
         auto dataLen = m_ifc->graphDataLength();
         auto dataMax = m_ifc->graphDataMax();
         auto dataMin = m_ifc->graphDataMin();
@@ -54,13 +54,13 @@ namespace gui {
         return std::make_pair(static_cast<std::size_t>(x), y);
     }
 
-    void Window::initPainter(QPainter& painter) const {
+    void GraphQt::initPainter(QPainter& painter) const {
         painter.setRenderHint(QPainter::Antialiasing);
         painter.translate(width() / 2, height() / 2);
         painter.scale(width() / szX, height() / szY);
     }
 
-    void Window::drawGrid(QPainter& painter) const {
+    void GraphQt::drawGrid(QPainter& painter) const {
         painter.setPen(QPen(Qt::gray, 0));
 
         for(std::size_t j = 0; j < XCNT; ++j) {
@@ -76,7 +76,7 @@ namespace gui {
         }
     }
 
-    void Window::drawAxis(QPainter& painter) const {
+    void GraphQt::drawAxis(QPainter& painter) const {
         auto dataLen = m_ifc->graphDataLength();
         auto dataMax = m_ifc->graphDataMax();
         auto dataMin = m_ifc->graphDataMin();
@@ -89,7 +89,7 @@ namespace gui {
         }
     }
 
-    void Window::drawScale(QPainter& painter) const {
+    void GraphQt::drawScale(QPainter& painter) const {
         painter.setPen(Qt::darkRed);
         for(std::size_t j = 1; j < YCNT; ++j) {
             auto pointB = QPointF(szX, j * YSIZE) - sOff;
@@ -101,7 +101,7 @@ namespace gui {
         }
     }
 
-    void Window::drawInfo(QPainter& painter) const {
+    void GraphQt::drawInfo(QPainter& painter) const {
         auto& graphName = m_ifc->graphName();
         auto& mask = m_ifc->dataMask();
         auto& dataV = m_ifc->dataVector();
@@ -120,7 +120,7 @@ namespace gui {
         }
     }
 
-    void Window::drawGraph(QPainter& painter) const {
+    void GraphQt::drawGraph(QPainter& painter) const {
         auto& mask = m_ifc->dataMask();
         auto& dataV = m_ifc->dataVector();
 
@@ -141,7 +141,7 @@ namespace gui {
         }
     }
 
-    void Window::paintEvent(QPaintEvent *) {
+    void GraphQt::paintEvent(QPaintEvent *) {
         QPainter painter(this);
         initPainter(painter);
 

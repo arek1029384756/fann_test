@@ -1,14 +1,14 @@
-#ifndef WINDOW_H
-#define WINDOW_H
+#ifndef GRAPHQT_H
+#define GRAPHQT_H
 
 #include <QWidget>
-#include <gui_interface.hpp>
+#include <gui_graph_interface.hpp>
 //#include <exception>
 //#include <stdexcept>    //covering g++ version differences
 
-namespace gui {
+namespace gui_qt {
 
-    class Window : public QWidget {
+    class GraphQt : public QWidget {
         Q_OBJECT
 
         static constexpr double szX = 2048.0;
@@ -26,7 +26,7 @@ namespace gui {
         static constexpr auto YSIZE = szY / YCNT;
 
 
-        GuiGraphInterfaceInt* m_ifc;
+        gui::GuiGraphInterfaceInt* m_ifc;
 
         QPointF d2phy(const std::pair<std::size_t, double>& d) const;
 
@@ -48,7 +48,7 @@ namespace gui {
         void updateData();
 
         public:
-        Window(GuiGraphInterfaceInt* ifc, QWidget* parent = 0);
+        GraphQt(gui::GuiGraphInterfaceInt* ifc, QWidget* parent = 0);
 
         protected:
         void paintEvent(QPaintEvent *event) override;

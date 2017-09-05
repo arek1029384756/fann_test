@@ -3,14 +3,14 @@
 
 #include <iostream>
 #include <memory>
-#include <window.h>
-#include <gui_interface.hpp>
+#include <graph_qt.h>
+#include <gui_graph_interface.hpp>
 #include <fnn_math.hpp>
 
 namespace gui {
 
     class GuiGraphQt : public GuiGraphInterfaceExt, public GuiGraphInterfaceInt {
-        std::unique_ptr<gui::Window> m_graph;
+        std::unique_ptr<gui_qt::GraphQt> m_graph;
 
         std::string m_graphName;
 
@@ -51,7 +51,7 @@ namespace gui {
 
         public:
         GuiGraphQt()
-            : m_graph(new gui::Window(this)) {
+            : m_graph(new gui_qt::GraphQt(this)) {
         }
 
 
