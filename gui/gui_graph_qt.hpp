@@ -1,5 +1,5 @@
-#ifndef GUI_QT
-#define GUI_QT
+#ifndef GUI_GRAPH_QT
+#define GUI_GRAPH_QT
 
 #include <iostream>
 #include <memory>

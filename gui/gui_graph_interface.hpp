@@ -1,5 +1,5 @@
-#ifndef GUI_INTERFACE
-#define GUI_INTERFACE
+#ifndef GUI_GRAPH_INTERFACE
+#define GUI_GRAPH_INTERFACE
 
 #include <set>
 #include <string>
