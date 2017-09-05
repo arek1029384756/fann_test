@@ -1,10 +1,5 @@
 #include <QtWidgets>
 #include <iostream>
-#include <algorithm>
-#include <vector>
-#include <set>
-#include <chrono>
-#include <fnn_math.hpp>
 #include "window.h"
 
 namespace gui {
@@ -22,12 +17,11 @@ namespace gui {
     }
 
     Window::Window(GuiGraphInterfaceInt* ifc, QWidget* parent)
-        : QWidget(parent), m_ifc(ifc), m_dataV(0) {
+        : QWidget(parent), m_ifc(ifc) {
         setWindowTitle(tr("FANN test"));
         setStyleSheet("background-color:lightGray;");
         resize(1024, 512);
 
-        m_ifc->bar();
         //QTimer::singleShot(100, this, SLOT(updateData()));
     }
 
@@ -36,58 +30,27 @@ namespace gui {
         //QTimer::singleShot(1000, this, SLOT(updateData()));
     }
 
-    void Window::getMinMaxStock(double& min, double& max) const {
-        auto res = math::compute<math::Limits>(*m_dataV, m_mask);
-        min = res.first;
-        max = res.second;
-    }
-
-    void Window::testDataPresence() const {
-        try {
-            std::cout << "Test of data presence on vector 0" << std::endl;
-            auto& element = m_dataV->getElementAt(0);
-            for(const auto& m : m_mask) {
-                auto name = m_dataV->getNameAt(m);
-                auto val = element.dataAt(m);
-                std::cout << "#" << m << ": " << name << "  " << val << std::endl;
-            }
-            std::cout << std::endl;
-        } catch(const std::out_of_range& e) {
-            throw std::runtime_error(
-                    std::string("[2] Chosen dataset index exceeds range. ") +
-                    std::string("Maybe your input file lacks some columns? '") +
-                    e.what() + std::string("'"));
-        }
-    }
-
-    void Window::setData(const mw::DataVector* const dataV, const std::set<int>& mask, const std::string& graphName) {
-        m_graphName = graphName;
-        m_mask = mask;
-        m_dataV = dataV;
-        m_dataLen = m_dataV->getElementsSize();
-
-        testDataPresence();
-        getMinMaxStock(m_dataMin, m_dataMax);
-
-        std::cout << "File:\t\t" << m_graphName << std::endl;
-        std::cout << "Data length:\t" << m_dataLen << std::endl;
-        std::cout << "Data max:\t" << m_dataMax << std::endl;
-        std::cout << "Data min:\t" << m_dataMin << std::endl << std::endl;
-    }
-
     QPointF Window::d2phy(const std::pair<std::size_t, double>& d) const {
-        qreal dRX = szX / m_dataLen;
-        qreal dRY = szY / (m_dataMax - m_dataMin);
-        auto p = QPointF(dRX * d.first, szY - dRY * (d.second - m_dataMin));
+        auto dataLen = m_ifc->graphDataLength();
+        auto dataMax = m_ifc->graphDataMax();
+        auto dataMin = m_ifc->graphDataMin();
+
+        qreal dRX = szX / dataLen;
+        qreal dRY = szY / (dataMax - dataMin);
+        auto p = QPointF(dRX * d.first, szY - dRY * (d.second - dataMin));
         return p - sOff;
     }
 
     std::pair<std::size_t, double> Window::phy2d(const QPointF& point) const {
-        qreal dLX = static_cast<qreal>(m_dataLen) / szX;
-        qreal dLY = static_cast<qreal>(m_dataMax - m_dataMin) / szY;
+        auto dataLen = m_ifc->graphDataLength();
+        auto dataMax = m_ifc->graphDataMax();
+        auto dataMin = m_ifc->graphDataMin();
+
+        qreal dLX = static_cast<qreal>(dataLen) / szX;
+        qreal dLY = static_cast<qreal>(dataMax - dataMin) / szY;
         auto p = -point + sOff;
         auto x = dLX * p.x();
-        auto y = dLY * p.y() + m_dataMin;
+        auto y = dLY * p.y() + dataMin;
         return std::make_pair(static_cast<std::size_t>(x), y);
     }
 
@@ -114,10 +77,14 @@ namespace gui {
     }
 
     void Window::drawAxis(QPainter& painter) const {
-        if(m_dataMin < 0 && m_dataMax > 0) {
+        auto dataLen = m_ifc->graphDataLength();
+        auto dataMax = m_ifc->graphDataMax();
+        auto dataMin = m_ifc->graphDataMin();
+
+        if(dataMin < 0 && dataMax > 0) {
             painter.setPen(QPen(Qt::red, 0));
             auto pointA = d2phy(std::make_pair(0, 0.0));
-            auto pointB = d2phy(std::make_pair(m_dataLen, 0.0));
+            auto pointB = d2phy(std::make_pair(dataLen, 0.0));
             painter.drawLine(pointA, pointB);
         }
     }
@@ -135,26 +102,33 @@ namespace gui {
     }
 
     void Window::drawInfo(QPainter& painter) const {
+        auto& graphName = m_ifc->graphName();
+        auto& mask = m_ifc->dataMask();
+        auto& dataV = m_ifc->dataVector();
+
         painter.setFont(QFont("Courier New", 18, QFont::Bold));
         auto boundingRect = QRectF(QPointF(10, 10) - sOff, QSizeF(512, 32));
         painter.setPen(Qt::black);
-        painter.drawText(boundingRect, Qt::AlignLeft, QString(m_graphName.c_str()));
+        painter.drawText(boundingRect, Qt::AlignLeft, QString(graphName.c_str()));
 
         std::size_t idx = 1;
-        for(const auto& m : m_mask) {
+        for(const auto& m : mask) {
             painter.setPen(colors[m]);
             boundingRect = QRectF(QPointF(10, 10 + 32 * idx++) - sOff, QSizeF(512, 32));
-            auto name = m_dataV->getNameAt(m);
+            auto name = dataV.getNameAt(m);
             painter.drawText(boundingRect, Qt::AlignLeft, QString(name.c_str()));
         }
     }
 
     void Window::drawGraph(QPainter& painter) const {
-        std::vector<QPointF> prev(m_dataV->elementDataSize());
-        auto& elem = m_dataV->getElements();
+        auto& mask = m_ifc->dataMask();
+        auto& dataV = m_ifc->dataVector();
+
+        std::vector<QPointF> prev(dataV.elementDataSize());
+        auto& elem = dataV.getElements();
         std::size_t idx = 0;
         for(const auto& x : elem) {
-            for(const auto& m : m_mask) {
+            for(const auto& m : mask) {
                 auto point = d2phy(std::make_pair(idx, x.dataAt(m)));
                 if(idx > 0) {
                     auto pen = QPen(colors[m], 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
@@ -172,10 +146,9 @@ namespace gui {
         initPainter(painter);
 
         drawGrid(painter);
-        //Commented-out until interface is implemented
-        //drawAxis(painter);
-        //drawGraph(painter);
-        //drawScale(painter);
-        //drawInfo(painter);
+        drawAxis(painter);
+        drawGraph(painter);
+        drawScale(painter);
+        drawInfo(painter);
     }
 }

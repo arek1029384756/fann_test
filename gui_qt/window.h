@@ -2,10 +2,6 @@
 #define WINDOW_H
 
 #include <QWidget>
-#include <vector>
-#include <memory>
-#include <set>
-#include <data_format.hpp>
 #include <gui_interface.hpp>
 //#include <exception>
 //#include <stdexcept>    //covering g++ version differences
@@ -32,22 +28,6 @@ namespace gui {
 
         GuiGraphInterfaceInt* m_ifc;
 
-        std::string m_graphName;
-
-        std::size_t m_dataLen;
-
-        double m_dataMax;
-
-        double m_dataMin;
-
-        const mw::DataVector* m_dataV;
-
-        std::set<int> m_mask;
-
-        void getMinMaxStock(double& min, double& max) const;
-
-        void testDataPresence() const;
-
         QPointF d2phy(const std::pair<std::size_t, double>& d) const;
 
         std::pair<std::size_t, double> phy2d(const QPointF& point) const;
@@ -69,7 +49,6 @@ namespace gui {
 
         public:
         Window(GuiGraphInterfaceInt* ifc, QWidget* parent = 0);
-        void setData(const mw::DataVector* const dataV, const std::set<int>& mask, const std::string& graphName);
 
         protected:
         void paintEvent(QPaintEvent *event) override;

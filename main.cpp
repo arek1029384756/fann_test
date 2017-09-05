@@ -42,26 +42,20 @@ namespace {
                 diff.print();
 
 
-                std::set<int> mask = { 1, 4 };
+                std::set<int> mask = { 2, 3 };
 
                 mw::DataVector dataVNorm;
                 dataVNorm.setNames(dataV.getNames());
                 math::compute<math::GaussNorm>(dataV, dataVNorm, mask);
                 //dataVNorm.print();
 
-                std::unique_ptr<gui::GuiGraphInterfaceExt> pG(new gui::GuiGraphQt());
-                pG->foo();
+                std::unique_ptr<gui::GuiGraphInterfaceExt> pGraphRaw(new gui::GuiGraphQt());
+                pGraphRaw->setData(&dataV, mask, std::string("Raw: ") + filename);
+                pGraphRaw->show();
 
-
-#if 0
-                gui::Window graph;
-                graph.setData(&dataV, mask, std::string("Raw: ") + filename);
-                graph.show();
-
-                gui::Window ngraph;
-                ngraph.setData(&dataVNorm, mask, std::string("Gauss: ") + filename);
-                ngraph.show();
-#endif
+                std::unique_ptr<gui::GuiGraphInterfaceExt> pGraphGauss(new gui::GuiGraphQt());
+                pGraphGauss->setData(&dataVNorm, mask, std::string("Gauss: ") + filename);
+                pGraphGauss->show();
 
                 return app.exec();
             } catch(const std::exception& e) {
