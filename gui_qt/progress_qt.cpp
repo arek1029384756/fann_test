@@ -25,12 +25,18 @@ namespace gui_qt {
 
         m_progressA->setMinimum(0);
         m_progressA->setMaximum(100);
-        m_progressA->setValue(74);
+        m_progressA->setValue(0);
 
         m_progressB->setMinimum(0);
         m_progressB->setMaximum(100);
         m_progressB->setValue(12);
 
+        connect(this, SIGNAL(signalNewData()), this, SLOT(slotNewData()));
+    }
+
+    void ProgressQt::slotNewData() {
+        auto val = m_ifc->getValue();
+        m_progressA->setValue(val);
     }
 
 }

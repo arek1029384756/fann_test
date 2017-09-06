@@ -6,14 +6,39 @@
 #include <parser_csv.hpp>
 #include <fnn_math.hpp>
 
+#include <thread>
+#include <chrono>
+
+//Temporary test function
+void fun(gui::GuiProgressInterfaceExtSync* const ifc) {
+    int cnt = 0;
+    for(int i = 0; i < 100; ++i) {
+        ifc->updateProgress(++cnt);
+        std::cout << "sent: " << cnt << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    }
+}
+
 namespace {
     class App {
         int m_argc;
         char** m_argv;
 
+        std::thread m_th;
+        std::unique_ptr<gui::GuiGraphInterfaceExt> m_graphRaw;
+        std::unique_ptr<gui::GuiGraphInterfaceExt> m_graphGauss;
+        std::unique_ptr<gui::GuiProgressQt> m_progress;
+
         public:
         App(int argc, char** argv)
             : m_argc(argc), m_argv(argv) {}
+
+        ~App() {
+            std::cout << __func__ << "()" << std::endl;
+            if(m_th.joinable()) {
+                m_th.join();
+            }
+        }
 
         static const std::string& getVersion() {
             static const std::string ver = "1.0";
@@ -50,16 +75,21 @@ namespace {
                 math::compute<math::GaussNorm>(dataV, dataVNorm, mask);
                 //dataVNorm.print();
 
-                std::unique_ptr<gui::GuiGraphInterfaceExt> pGraphRaw(new gui::GuiGraphQt());
-                pGraphRaw->setData(&dataV, mask, std::string("Raw: ") + filename);
-                pGraphRaw->show();
+                m_graphRaw.reset(new gui::GuiGraphQt());
+                m_graphRaw->setData(&dataV, mask, std::string("Raw: ") + filename);
+                m_graphRaw->show();
 
-                std::unique_ptr<gui::GuiGraphInterfaceExt> pGraphGauss(new gui::GuiGraphQt());
-                pGraphGauss->setData(&dataVNorm, mask, std::string("Gauss: ") + filename);
-                pGraphGauss->show();
+                m_graphGauss.reset(new gui::GuiGraphQt());
+                m_graphGauss->setData(&dataVNorm, mask, std::string("Gauss: ") + filename);
+                m_graphGauss->show();
 
-                std::unique_ptr<gui::GuiProgressInterfaceExt> pProgress(new gui::GuiProgressQt());
-                pProgress->show();
+                m_progress.reset(new gui::GuiProgressQt());
+
+                gui::GuiProgressInterfaceExt* pProgressExt = m_progress.get();
+                gui::GuiProgressInterfaceExtSync* pProgressExtSync = m_progress.get();
+                pProgressExt->show();
+
+                m_th = std::thread(fun, pProgressExtSync);
 
                 return app.exec();
             } catch(const std::exception& e) {

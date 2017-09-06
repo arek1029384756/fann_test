@@ -21,7 +21,10 @@ namespace gui_qt {
         std::shared_ptr<QProgressBar> m_progressB;
 
         public slots:
-        //void updateData();
+        void slotNewData();
+
+        signals:
+        void signalNewData();
 
         public:
         ProgressQt(gui::GuiProgressInterfaceInt* ifc, QDialog* parent = 0);
