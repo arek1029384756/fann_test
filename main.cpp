@@ -34,7 +34,7 @@ namespace {
             : m_argc(argc), m_argv(argv) {}
 
         ~App() {
-            std::cout << __func__ << "()" << std::endl;
+            std::cout << __func__ << "(), this: " << this << std::endl;
             if(m_th.joinable()) {
                 m_th.join();
             }
@@ -59,15 +59,22 @@ namespace {
                 auto& dataV = parser.getData();
                 //dataV.print();
 
-                auto inp = dataV.getChunk(10, 15);
-                auto out = dataV.getChunk(16, 18);
-                auto trainV = mw::AnnVector(inp, out);
-                trainV.print();
+                auto inp = dataV.getChunk(10, 410);
+                auto out = dataV.getChunk(20, 420);
+                //auto trainV = mw::AnnVector(inp, out);
+                //trainV.print();
 
                 auto diff = inp.getDiff();
                 diff.print();
 
+                auto chunkGraph = inp.getCopy();
+                chunkGraph.appendHorizontal(out.getCopy());
 
+                std::set<int> mask = { 2, 8 };
+                m_graphRaw.reset(new gui::GuiGraphQt());
+                m_graphRaw->setData(&chunkGraph, mask, std::string("Chunk: ") + filename);
+                m_graphRaw->show();
+#if 0
                 std::set<int> mask = { 2, 3 };
 
                 mw::DataVector dataVNorm;
@@ -90,7 +97,7 @@ namespace {
                 pProgressExt->show();
 
                 m_th = std::thread(fun, pProgressExtSync);
-
+#endif
                 return app.exec();
             } catch(const std::exception& e) {
                 std::cerr << "\033[0;31mException raised:" << std::endl;

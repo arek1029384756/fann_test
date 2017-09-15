@@ -30,6 +30,10 @@ namespace mw {
             return m_data.size();
         }
 
+        void appendData(const DataElement& other) {
+            m_data.insert(m_data.end(), other.getData().begin(), other.getData().end());
+        }
+
         void print() const {
             auto& v = getData();
             for(auto val : v) {
@@ -69,6 +73,20 @@ namespace mw {
             return elements.at(m_idxLast) - elements.at(m_idxFirst);
         }
 
+        //Makes new data vector as a copy of the chunk
+        //This method makes a copy of potentially large data structure
+        //Use with caution! Only for helper purposes (not for data processing)
+        TDataVector getCopy() const {
+            TDataVector v;
+
+            v.setNames(m_dataV->getNames());
+            for(auto it = m_first; it != std::next(m_last, 1); std::advance(it, 1)) {
+                v.addElement(*it);
+            }
+
+            return v;
+        }
+
         void print() const {
             std::cout << "Chunk[" << m_idxFirst << ", " << m_idxLast << "]" << std::endl;
             for(auto it = m_first; it != std::next(m_last, 1); std::advance(it, 1)) {
@@ -85,6 +103,10 @@ namespace mw {
 
         public:
         typedef DataChunk<DataVector, DataElement> DVChunk;
+
+        DataVector() {
+            std::cout << __func__ << "(), this: " << this << std::endl;
+        }
 
         const std::vector<DataElement>& getElements() const {
             return m_elements;
@@ -120,6 +142,15 @@ namespace mw {
 
         void setNames(const std::vector<std::string>& names) {
             m_names = names;
+        }
+
+        void appendHorizontal(const DataVector& other) {
+            m_names.insert(m_names.end(), other.getNames().begin(), other.getNames().end());
+
+            for(std::size_t i = 0; i < std::min(getElementsSize(), other.getElementsSize()); ++i) {
+                auto& element = m_elements.at(i);
+                element.appendData(other.getElementAt(i));
+            }
         }
 
         void print() const {
