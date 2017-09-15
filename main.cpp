@@ -5,6 +5,7 @@
 #include <file_reader.hpp>
 #include <parser_csv.hpp>
 #include <fnn_math.hpp>
+#include <data_processor.hpp>
 
 #include <thread>
 #include <chrono>
@@ -27,6 +28,7 @@ namespace {
         std::thread m_th;
         std::unique_ptr<gui::GuiGraphInterfaceExt> m_graphRaw;
         std::unique_ptr<gui::GuiGraphInterfaceExt> m_graphGauss;
+        std::unique_ptr<gui::GuiGraphInterfaceExt> m_graphChunk;
         std::unique_ptr<gui::GuiProgressQt> m_progress;
 
         public:
@@ -60,7 +62,7 @@ namespace {
                 //dataV.print();
 
                 auto inp = dataV.getChunk(10, 410);
-                auto out = dataV.getChunk(20, 420);
+                auto out = dataV.getChunk(50, 450);
                 //auto trainV = mw::AnnVector(inp, out);
                 //trainV.print();
 
@@ -70,10 +72,10 @@ namespace {
                 auto chunkGraph = inp.getCopy();
                 chunkGraph.appendHorizontal(out.getCopy());
 
-                std::set<int> mask = { 2, 8 };
-                m_graphRaw.reset(new gui::GuiGraphQt());
-                m_graphRaw->setData(&chunkGraph, mask, std::string("Chunk: ") + filename);
-                m_graphRaw->show();
+                std::set<int> maskCh = { 2, 3, 8, 9 };
+                m_graphChunk.reset(new gui::GuiGraphQt());
+                m_graphChunk->setData(&chunkGraph, maskCh, std::string("Chunk: ") + filename);
+                m_graphChunk->show();
 #if 0
                 std::set<int> mask = { 2, 3 };
 
@@ -98,6 +100,10 @@ namespace {
 
                 m_th = std::thread(fun, pProgressExtSync);
 #endif
+
+                auto& dataProcessor = data_processor::DataProcessor::getInstance();
+                dataProcessor.start();
+
                 return app.exec();
             } catch(const std::exception& e) {
                 std::cerr << "\033[0;31mException raised:" << std::endl;
