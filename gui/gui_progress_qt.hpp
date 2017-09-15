@@ -28,6 +28,8 @@ namespace gui {
                         << std::endl;
         }
 
+        virtual ~GuiProgressQt() {
+        }
 
         //External synchronized interface
         virtual void updateProgress(int value) {

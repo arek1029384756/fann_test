@@ -5,7 +5,7 @@
 namespace gui_qt {
 
     namespace {
-        static const QColor colors[] = {
+        const std::vector<QColor> colors = {
             Qt::black,
             Qt::darkGreen,
             Qt::red,
@@ -14,6 +14,10 @@ namespace gui_qt {
             Qt::darkCyan,
             Qt::yellow
         };
+
+        QColor getColor(std::size_t idx) {
+            return colors[idx % colors.size()];
+        }
     }
 
     GraphQt::GraphQt(gui::GuiGraphInterfaceInt* ifc, QWidget* parent)
@@ -113,7 +117,7 @@ namespace gui_qt {
 
         std::size_t idx = 1;
         for(const auto& m : mask) {
-            painter.setPen(colors[m]);
+            painter.setPen(getColor(m));
             boundingRect = QRectF(QPointF(10, 10 + 32 * idx++) - sOff, QSizeF(512, 32));
             auto name = dataV.getNameAt(m);
             painter.drawText(boundingRect, Qt::AlignLeft, QString(name.c_str()));
@@ -131,7 +135,7 @@ namespace gui_qt {
             for(const auto& m : mask) {
                 auto point = d2phy(std::make_pair(idx, x.dataAt(m)));
                 if(idx > 0) {
-                    auto pen = QPen(colors[m], 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+                    auto pen = QPen(getColor(m), 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
                     painter.setPen(pen);
                     painter.drawLine(prev.at(m), point);
                 }

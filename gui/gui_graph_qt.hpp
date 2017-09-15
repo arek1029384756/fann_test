@@ -54,6 +54,8 @@ namespace gui {
             : m_graph(new gui_qt::GraphQt(this)) {
         }
 
+        virtual ~GuiGraphQt() {
+        }
 
         //External interface
         virtual void setData(const mw::DataVector* const dataV, const std::set<int>& mask, const std::string& graphName) {
