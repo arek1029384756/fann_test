@@ -24,6 +24,7 @@ namespace {
     class App {
         int m_argc;
         char** m_argv;
+        QApplication* m_qtApp;
 
         std::thread m_th;
         std::unique_ptr<gui::GuiGraphQt> m_graphRaw;
@@ -32,8 +33,8 @@ namespace {
         std::unique_ptr<gui::GuiProgressQt> m_progress;
 
         public:
-        App(int argc, char** argv)
-            : m_argc(argc), m_argv(argv) {}
+        App(int argc, char** argv, QApplication* const qtApp)
+            : m_argc(argc), m_argv(argv), m_qtApp(qtApp) {}
 
         ~App() {
             std::cout << __func__ << "(), this: " << this << std::endl;
@@ -49,7 +50,6 @@ namespace {
 
         int run() {
             try {
-                QApplication app(m_argc, m_argv);
                 std::setlocale(LC_NUMERIC, "C");
 
                 const std::string filename = (m_argc > 1) ? m_argv[1] : "<empty>";
@@ -106,7 +106,7 @@ namespace {
                 auto& dataProcessor = data_processor::DataProcessor::getInstance();
                 dataProcessor.start();
 
-                return app.exec();
+                return m_qtApp->exec();
             } catch(const std::exception& e) {
                 std::cerr << "\033[0;31mException raised:" << std::endl;
                 std::cerr << e.what() << "\033[0m" << std::endl;
@@ -122,6 +122,7 @@ namespace {
 }
 
 int main(int argc, char** argv) {
-    App a(argc, argv);
-    return a.run();
+    QApplication qtApp(argc, argv);
+    App app(argc, argv, &qtApp);
+    return app.run();
 }

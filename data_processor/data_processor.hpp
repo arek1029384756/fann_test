@@ -25,10 +25,11 @@ namespace data_processor {
         }
 
         DataProcessor() {
-
+            std::cout << __func__ << "(), this: " << this << std::endl;
         }
 
         virtual ~DataProcessor() {
+            std::cout << __func__ << "(), this: " << this << std::endl;
             if(m_th.joinable()) {
                 m_th.join();    
             }

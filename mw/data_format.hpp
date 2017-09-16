@@ -108,6 +108,10 @@ namespace mw {
             std::cout << __func__ << "(), this: " << this << std::endl;
         }
 
+        ~DataVector() {
+            std::cout << __func__ << "(), this: " << this << std::endl;
+        }
+
         const std::vector<DataElement>& getElements() const {
             return m_elements;
         }
