@@ -12,11 +12,9 @@
 
 //Temporary test function
 void fun(gui::GuiProgressInterfaceExtSync* const ifc) {
-    int cnt = 0;
-    for(int i = 0; i < 100; ++i) {
-        ifc->updateProgress(++cnt);
-        std::cout << "sent: " << cnt << std::endl;
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    for(int i = 0; i < 101; ++i) {
+        ifc->updateProgress(i);
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
 
@@ -32,11 +30,15 @@ namespace {
         std::unique_ptr<gui::GuiGraphQt> m_graphChunk;
         std::unique_ptr<gui::GuiProgressQt> m_progress;
 
+        //DataProcessor unique_ptr hast to be declared _after_ all
+        //the widgets it uses (destruction order)
+        std::unique_ptr<data_processor::DataProcessor> m_dataProcessor;
+
         public:
         App(int argc, char** argv, QApplication* const qtApp)
             : m_argc(argc), m_argv(argv), m_qtApp(qtApp) {}
 
-        ~App() {
+        virtual ~App() {
             std::cout << __func__ << "(), this: " << this << std::endl;
             if(m_th.joinable()) {
                 m_th.join();
@@ -107,8 +109,9 @@ namespace {
                 m_th = std::thread(fun, pProgressExtSync);
 #endif
 
-                auto& dataProcessor = data_processor::DataProcessor::getInstance();
-                dataProcessor.start();
+                m_dataProcessor.reset(new data_processor::DataProcessor(pGraphChunkExtSync));
+                m_dataProcessor->setData(dataV);
+                m_dataProcessor->start();
 
                 return m_qtApp->exec();
             } catch(const std::exception& e) {

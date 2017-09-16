@@ -23,12 +23,14 @@ namespace gui {
         public:
         GuiProgressQt()
             : m_progress(new gui_qt::ProgressQt(this)) {
+            std::cout << __func__ << "(), this: " << this << std::endl;
             std::cout << "Atomic progress bar data update operation is "
                         << ((m_value.is_lock_free()) ? "lock free" : "NOT lock free")
                         << std::endl;
         }
 
         virtual ~GuiProgressQt() {
+            std::cout << __func__ << "(), this: " << this << std::endl;
         }
 
         //External synchronized interface

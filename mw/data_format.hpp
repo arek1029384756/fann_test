@@ -105,11 +105,11 @@ namespace mw {
         typedef DataChunk<DataVector, DataElement> DVChunk;
 
         DataVector() {
-            std::cout << __func__ << "(), this: " << this << std::endl;
+            //std::cout << __func__ << "(), this: " << this << std::endl;
         }
 
-        ~DataVector() {
-            std::cout << __func__ << "(), this: " << this << std::endl;
+        virtual ~DataVector() {
+            //std::cout << __func__ << "(), this: " << this << std::endl;
         }
 
         const std::vector<DataElement>& getElements() const {

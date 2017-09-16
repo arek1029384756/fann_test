@@ -66,7 +66,7 @@ namespace gui {
         }
 
         void setSharedData(const mw::DataVector& dataV, const std::set<int>& mask, const std::string& graphName) {
-            std::unique_lock<std::mutex>(m_dataMtx);
+            std::unique_lock<std::mutex> lck(m_dataMtx);
 
             m_shared.graphName = graphName;
             m_shared.mask = mask;
@@ -74,7 +74,7 @@ namespace gui {
         }
 
         void getSharedData() {
-            std::unique_lock<std::mutex>(m_dataMtx);
+            std::unique_lock<std::mutex> lck(m_dataMtx);
 
             m_graphName = m_shared.graphName;
             m_mask = m_shared.mask;
@@ -89,9 +89,11 @@ namespace gui {
         public:
         GuiGraphQt()
             : m_graph(new gui_qt::GraphQt(this)) {
+            std::cout << __func__ << "(), this: " << this << std::endl;
         }
 
         virtual ~GuiGraphQt() {
+            std::cout << __func__ << "(), this: " << this << std::endl;
         }
 
 
