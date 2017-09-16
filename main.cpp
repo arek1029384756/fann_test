@@ -78,7 +78,7 @@ namespace {
                 gui::GuiGraphInterfaceExt* pGraphChunkExt = m_graphChunk.get();
                 pGraphChunkExtSync->setData(chunkGraph, maskCh, std::string("Chunk: ") + filename);
                 pGraphChunkExt->show();
-#if 0
+#if 1
                 std::set<int> mask = { 2, 3 };
 
                 mw::DataVector dataVNorm;
@@ -87,12 +87,16 @@ namespace {
                 //dataVNorm.print();
 
                 m_graphRaw.reset(new gui::GuiGraphQt());
-                m_graphRaw->setData(&dataV, mask, std::string("Raw: ") + filename);
-                m_graphRaw->show();
+                gui::GuiGraphInterfaceExtSync* pGraphRawExtSync = m_graphRaw.get();
+                gui::GuiGraphInterfaceExt* pGraphRawExt = m_graphRaw.get();
+                pGraphRawExtSync->setData(dataV, mask, std::string("Raw: ") + filename);
+                pGraphRawExt->show();
 
                 m_graphGauss.reset(new gui::GuiGraphQt());
-                m_graphGauss->setData(&dataVNorm, mask, std::string("Gauss: ") + filename);
-                m_graphGauss->show();
+                gui::GuiGraphInterfaceExtSync* pGraphGaussExtSync = m_graphGauss.get();
+                gui::GuiGraphInterfaceExt* pGraphGaussExt = m_graphGauss.get();
+                pGraphGaussExtSync->setData(dataVNorm, mask, std::string("Gauss: ") + filename);
+                pGraphGaussExt->show();
 
                 m_progress.reset(new gui::GuiProgressQt());
 
