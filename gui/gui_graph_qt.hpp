@@ -3,18 +3,36 @@
 
 #include <iostream>
 #include <memory>
+#include <mutex>
 #include <graph_qt.h>
 #include <gui_graph_interface.hpp>
 #include <fnn_math.hpp>
 
 namespace gui {
 
-    class GuiGraphQt : public GuiGraphInterfaceExt, public GuiGraphInterfaceInt {
+    class GuiGraphQt : public GuiGraphInterfaceExtSync,
+                        public GuiGraphInterfaceExt,
+                        public GuiGraphInterfaceInt {
+
+        struct _shared {
+            std::string graphName;
+            std::set<int> mask;
+            mw::DataVector dataV;
+        };
+
+
         std::unique_ptr<gui_qt::GraphQt> m_graph;
+
+        _shared m_shared;
+
+        std::mutex m_dataMtx;
+
 
         std::string m_graphName;
 
-        const mw::DataVector* m_dataV;
+        std::set<int> m_mask;
+
+        mw::DataVector m_dataV;
 
         std::size_t m_dataLen;
 
@@ -22,10 +40,9 @@ namespace gui {
 
         double m_dataMin;
 
-        std::set<int> m_mask;
 
         void getMinMaxStock(double& min, double& max) const {
-            auto res = math::compute<math::Limits>(*m_dataV, m_mask);
+            auto res = math::compute<math::Limits>(m_dataV, m_mask);
             min = res.first;
             max = res.second;
         }
@@ -33,9 +50,9 @@ namespace gui {
         void testDataPresence() const {
             try {
                 std::cout << "Test of data presence on vector 0" << std::endl;
-                auto& element = m_dataV->getElementAt(0);
+                auto& element = m_dataV.getElementAt(0);
                 for(const auto& m : m_mask) {
-                    auto name = m_dataV->getNameAt(m);
+                    auto name = m_dataV.getNameAt(m);
                     auto val = element.dataAt(m);
                     std::cout << "#" << m << ": " << name << "  " << val << std::endl;
                 }
@@ -48,6 +65,26 @@ namespace gui {
             }
         }
 
+        void setSharedData(const mw::DataVector& dataV, const std::set<int>& mask, const std::string& graphName) {
+            std::unique_lock<std::mutex>(m_dataMtx);
+
+            m_shared.graphName = graphName;
+            m_shared.mask = mask;
+            m_shared.dataV = dataV;
+        }
+
+        void getSharedData() {
+            std::unique_lock<std::mutex>(m_dataMtx);
+
+            m_graphName = m_shared.graphName;
+            m_mask = m_shared.mask;
+            m_dataV = m_shared.dataV;
+        }
+
+        void notifyGraph() const {
+            emit m_graph->signalNewData();
+        }
+
 
         public:
         GuiGraphQt()
@@ -57,24 +94,15 @@ namespace gui {
         virtual ~GuiGraphQt() {
         }
 
-        //External interface
-        virtual void setData(const mw::DataVector* const dataV, const std::set<int>& mask, const std::string& graphName) {
-            m_graphName = graphName;
-            m_mask = mask;
-            m_dataV = dataV;
-            m_dataLen = m_dataV->getElementsSize();
 
-            testDataPresence();
-            getMinMaxStock(m_dataMin, m_dataMax);
-
-            m_graph->update();
-
-            std::cout << "File:\t\t" << m_graphName << std::endl;
-            std::cout << "Data length:\t" << m_dataLen << std::endl;
-            std::cout << "Data max:\t" << m_dataMax << std::endl;
-            std::cout << "Data min:\t" << m_dataMin << std::endl << std::endl;
+        //External synchronized interface
+        virtual void setData(const mw::DataVector& dataV, const std::set<int>& mask, const std::string& graphName) {
+            setSharedData(dataV, mask, graphName);
+            notifyGraph();
         }
 
+
+        //External interface
         virtual void show() const {
             m_graph->show();
         }
@@ -102,7 +130,21 @@ namespace gui {
         }
 
         virtual const mw::DataVector& dataVector() const {
-            return *m_dataV;
+            return m_dataV;
+        }
+
+        virtual void newDataInit() {
+            getSharedData();
+
+            m_dataLen = m_dataV.getElementsSize();
+
+            testDataPresence();
+            getMinMaxStock(m_dataMin, m_dataMax);
+
+            std::cout << "Graph name:\t\t" << m_graphName << std::endl;
+            std::cout << "Data length:\t" << m_dataLen << std::endl;
+            std::cout << "Data max:\t" << m_dataMax << std::endl;
+            std::cout << "Data min:\t" << m_dataMin << std::endl << std::endl;
         }
 
 

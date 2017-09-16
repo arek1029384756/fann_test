@@ -26,12 +26,12 @@ namespace gui_qt {
         setStyleSheet("background-color:lightGray;");
         resize(1024, 512);
 
-        //QTimer::singleShot(100, this, SLOT(updateData()));
+        connect(this, SIGNAL(signalNewData()), this, SLOT(slotNewData()));
     }
 
-    void GraphQt::updateData() {
+    void GraphQt::slotNewData() {
+        m_ifc->newDataInit();
         update();
-        //QTimer::singleShot(1000, this, SLOT(updateData()));
     }
 
     QPointF GraphQt::d2phy(const std::pair<std::size_t, double>& d) const {

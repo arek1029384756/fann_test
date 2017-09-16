@@ -7,9 +7,13 @@
 
 namespace gui {
 
+    class GuiGraphInterfaceExtSync {
+        public:
+        virtual void setData(const mw::DataVector& dataV, const std::set<int>& mask, const std::string& graphName) = 0;
+    };
+
     class GuiGraphInterfaceExt {
         public:
-        virtual void setData(const mw::DataVector* const dataV, const std::set<int>& mask, const std::string& graphName) = 0;
         virtual void show() const = 0;
     };
 
@@ -21,6 +25,7 @@ namespace gui {
         virtual const std::string& graphName() const = 0;
         virtual const std::set<int>& dataMask() const = 0;
         virtual const mw::DataVector& dataVector() const = 0;
+        virtual void newDataInit() = 0;
     };
 
 }

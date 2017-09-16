@@ -26,9 +26,9 @@ namespace {
         char** m_argv;
 
         std::thread m_th;
-        std::unique_ptr<gui::GuiGraphInterfaceExt> m_graphRaw;
-        std::unique_ptr<gui::GuiGraphInterfaceExt> m_graphGauss;
-        std::unique_ptr<gui::GuiGraphInterfaceExt> m_graphChunk;
+        std::unique_ptr<gui::GuiGraphQt> m_graphRaw;
+        std::unique_ptr<gui::GuiGraphQt> m_graphGauss;
+        std::unique_ptr<gui::GuiGraphQt> m_graphChunk;
         std::unique_ptr<gui::GuiProgressQt> m_progress;
 
         public:
@@ -74,8 +74,10 @@ namespace {
 
                 std::set<int> maskCh = { 2, 3, 8, 9 };
                 m_graphChunk.reset(new gui::GuiGraphQt());
-                m_graphChunk->setData(&chunkGraph, maskCh, std::string("Chunk: ") + filename);
-                m_graphChunk->show();
+                gui::GuiGraphInterfaceExtSync* pGraphChunkExtSync = m_graphChunk.get();
+                gui::GuiGraphInterfaceExt* pGraphChunkExt = m_graphChunk.get();
+                pGraphChunkExtSync->setData(chunkGraph, maskCh, std::string("Chunk: ") + filename);
+                pGraphChunkExt->show();
 #if 0
                 std::set<int> mask = { 2, 3 };
 

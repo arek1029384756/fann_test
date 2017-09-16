@@ -45,7 +45,10 @@ namespace gui_qt {
         void drawGraph(QPainter& painter) const;
 
         public slots:
-        void updateData();
+        void slotNewData();
+
+        signals:
+        void signalNewData();
 
         public:
         GraphQt(gui::GuiGraphInterfaceInt* ifc, QWidget* parent = 0);
