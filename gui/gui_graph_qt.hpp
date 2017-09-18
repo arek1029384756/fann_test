@@ -4,6 +4,7 @@
 #include <iostream>
 #include <memory>
 #include <mutex>
+#include <logger.h>
 #include <graph_qt.h>
 #include <gui_graph_interface.hpp>
 #include <fnn_math.hpp>
@@ -49,14 +50,14 @@ namespace gui {
 
         void testDataPresence() const {
             try {
-                std::cout << "Test of data presence on vector 0" << std::endl;
+                tout << "Test of data presence on vector 0" << std::endl;
                 auto& element = m_dataV.getElementAt(0);
                 for(const auto& m : m_mask) {
                     auto name = m_dataV.getNameAt(m);
                     auto val = element.dataAt(m);
-                    std::cout << "#" << m << ": " << name << "  " << val << std::endl;
+                    tout << "#" << m << ": " << name << "  " << val << std::endl;
                 }
-                std::cout << std::endl;
+                tout << std::endl;
             } catch(const std::out_of_range& e) {
                 throw std::runtime_error(
                         std::string("[2] Chosen dataset index exceeds range. ") +
@@ -89,11 +90,11 @@ namespace gui {
         public:
         GuiGraphQt()
             : m_graph(new gui_qt::GraphQt(this)) {
-            std::cout << __func__ << "(), this: " << this << std::endl;
+            tout << __func__ << "(), this: " << this << std::endl;
         }
 
         virtual ~GuiGraphQt() {
-            std::cout << __func__ << "(), this: " << this << std::endl;
+            tout << __func__ << "(), this: " << this << std::endl;
         }
 
 
@@ -143,10 +144,10 @@ namespace gui {
             testDataPresence();
             getMinMaxStock(m_dataMin, m_dataMax);
 
-            std::cout << "Graph name:\t\t" << m_graphName << std::endl;
-            std::cout << "Data length:\t" << m_dataLen << std::endl;
-            std::cout << "Data max:\t" << m_dataMax << std::endl;
-            std::cout << "Data min:\t" << m_dataMin << std::endl << std::endl;
+            tout << "Graph name:\t\t" << m_graphName << std::endl;
+            tout << "Data length:\t" << m_dataLen << std::endl;
+            tout << "Data max:\t" << m_dataMax << std::endl;
+            tout << "Data min:\t" << m_dataMin << std::endl << std::endl;
         }
 
 

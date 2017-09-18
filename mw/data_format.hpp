@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <logger.h>
 
 namespace mw {
 
@@ -37,9 +38,9 @@ namespace mw {
         void print() const {
             auto& v = getData();
             for(auto val : v) {
-                std::cout << val << "\t\t";
+                tout << val << "\t\t";
             }
-            std::cout << std::endl;
+            tout << std::endl;
         }
 
         DataElement operator-(const DataElement& other) const {
@@ -88,11 +89,11 @@ namespace mw {
         }
 
         void print() const {
-            std::cout << "Chunk[" << m_idxFirst << ", " << m_idxLast << "]" << std::endl;
+            tout << "Chunk[" << m_idxFirst << ", " << m_idxLast << "]" << std::endl;
             for(auto it = m_first; it != std::next(m_last, 1); std::advance(it, 1)) {
                 it->print();
             }
-            std::cout << std::endl;
+            tout << std::endl;
         }
     };
 
@@ -105,11 +106,11 @@ namespace mw {
         typedef DataChunk<DataVector, DataElement> DVChunk;
 
         DataVector() {
-            //std::cout << __func__ << "(), this: " << this << std::endl;
+            //tout << __func__ << "(), this: " << this << std::endl;
         }
 
         virtual ~DataVector() {
-            //std::cout << __func__ << "(), this: " << this << std::endl;
+            //tout << __func__ << "(), this: " << this << std::endl;
         }
 
         const std::vector<DataElement>& getElements() const {
@@ -159,9 +160,9 @@ namespace mw {
 
         void print() const {
             for(const auto& n : m_names) {
-                std::cout << n << "\t";
+                tout << n << "\t";
             }
-            std::cout << std::endl;
+            tout << std::endl;
 
             for(const auto& el : m_elements) {
                 el.print();
@@ -191,9 +192,9 @@ namespace mw {
         }
 
         void print() const {
-            std::cout << std::endl << "Input ";
+            tout << std::endl << "Input ";
             m_input.print();
-            std::cout << std::endl << "Output ";
+            tout << std::endl << "Output ";
             m_output.print();
         }
     };

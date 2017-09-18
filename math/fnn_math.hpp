@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <logger.h>
 #include <data_format.hpp>
 
 namespace math {
@@ -24,7 +25,7 @@ namespace math {
     class Limits {
         public:
         static std::pair<double, double> operation(const mw::DataVector& in, const std::set<int>& mask) {
-            std::cout << "limits" << std::endl;
+            tout << "limits" << std::endl;
             auto& elem = in.getElements();
             double min = std::numeric_limits<double>::max();
             double max = std::numeric_limits<double>::lowest();
@@ -48,7 +49,7 @@ namespace math {
     class Mean {
         public:
         static std::vector<double> operation(const mw::DataVector& in, const std::set<int>& mask) {
-            std::cout << "mean" << std::endl;
+            tout << "mean" << std::endl;
             auto& elem = in.getElements();
             std::vector<double> zero(in.elementDataSize(), 0.0);
             std::vector<double> sums = std::accumulate(elem.begin(), elem.end(), zero, [&](std::vector<double>& sum, const mw::DataElement& v) {
@@ -60,9 +61,9 @@ namespace math {
             });
 
             for(auto& x : sums) {
-                std::cout << x << std::endl;
+                tout << x << std::endl;
                 x /= elem.size();
-                std::cout << x << std::endl << std::endl;
+                tout << x << std::endl << std::endl;
             }
 
             return sums;
@@ -72,7 +73,7 @@ namespace math {
     class Sigma {
         public:
         static std::vector<double> operation(const mw::DataVector& in, const std::vector<double>& mean, const std::set<int>& mask) {
-            std::cout << "sigma" << std::endl;
+            tout << "sigma" << std::endl;
             auto& elem = in.getElements();
             std::vector<double> zero(in.elementDataSize(), 0.0);
             std::vector<double> sums = std::accumulate(elem.begin(), elem.end(), zero, [&](std::vector<double>& sum, const mw::DataElement& v) {
@@ -84,10 +85,10 @@ namespace math {
             });
 
             for(auto& x : sums) {
-                std::cout << x << std::endl;
+                tout << x << std::endl;
                 x /= (elem.size() - 1);
                 x = std::sqrt(x);
-                std::cout << x << std::endl << std::endl;
+                tout << x << std::endl << std::endl;
             }
 
             return sums;
@@ -97,7 +98,7 @@ namespace math {
     class GaussNorm {
         public:
         static int operation(const mw::DataVector& in, mw::DataVector& out, const std::set<int>& mask) {
-            std::cout << "gauss" << std::endl;
+            tout << "gauss" << std::endl;
             auto mean = compute<Mean>(in, mask);
             auto sigma = compute<Sigma>(in, mean, mask);
             auto& elem = in.getElements();

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <logger.h>
 #include "parser_interface.hpp"
 
 namespace parsers {
@@ -27,9 +28,9 @@ namespace parsers {
             } catch(const std::invalid_argument& e) {
                 for(const auto& t : tokens) {
                     m_dataV.addName(t);
-                    std::cout << t << std::endl;
+                    tout << t << std::endl;
                 }
-                std::cout << "Processed non-number tokens" << std::endl;
+                tout << "Processed non-number tokens" << std::endl;
             }
         }
 
@@ -38,7 +39,7 @@ namespace parsers {
             static uint64_t lineCnt = 0;
 
             if(lineCnt > 0 && currentSize != tokensSize) {
-                std::cout << "\033[0;33mWarning! Data length mismatch at line "
+                tout << "\033[0;33mWarning! Data length mismatch at line "
                 << lineCnt << " (" << currentSize << " -> " << tokensSize << ")\033[0m" << std::endl;
             }
             currentSize = tokensSize;

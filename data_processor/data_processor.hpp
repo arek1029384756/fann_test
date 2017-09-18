@@ -7,6 +7,7 @@
 #include <mutex>
 #include <chrono>
 #include <string>
+#include <logger.h>
 
 namespace data_processor {
 
@@ -48,12 +49,12 @@ namespace data_processor {
         public:
         DataProcessor(gui::GuiGraphInterfaceExtSync* const ifc)
             : m_ifc(ifc) {
-            std::cout << __func__ << "(), this: " << this << std::endl;
+            tout << __func__ << "(), this: " << this << std::endl;
         }
 
         virtual ~DataProcessor() {
             stop();
-            std::cout << __func__ << "(), [thread stopped] this: " << this << std::endl;
+            tout << __func__ << "(), [thread stopped] this: " << this << std::endl;
         }
 
         void start() {

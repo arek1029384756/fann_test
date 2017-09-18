@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <iostream>
+#include <logger.h>
 #include <gui_graph_qt.hpp>
 #include <gui_progress_qt.hpp>
 #include <file_reader.hpp>
@@ -39,7 +40,7 @@ namespace {
             : m_argc(argc), m_argv(argv), m_qtApp(qtApp) {}
 
         virtual ~App() {
-            std::cout << __func__ << "(), this: " << this << std::endl;
+            tout << __func__ << "(), this: " << this << std::endl;
             if(m_th.joinable()) {
                 m_th.join();
             }
@@ -115,11 +116,11 @@ namespace {
 
                 return m_qtApp->exec();
             } catch(const std::exception& e) {
-                std::cerr << "\033[0;31mException raised:" << std::endl;
-                std::cerr << e.what() << "\033[0m" << std::endl;
+                terr << "\033[0;31mException raised:" << std::endl;
+                terr << e.what() << "\033[0m" << std::endl;
                 return EXIT_FAILURE;
             } catch(...) {
-                std::cerr << "\033[0;31mUnknown exception! Something really bad happened\033[0m"
+                terr << "\033[0;31mUnknown exception! Something really bad happened\033[0m"
                     << std::endl;
                 return EXIT_FAILURE;
             }
