@@ -58,7 +58,7 @@ namespace {
                 const std::string filename = (m_argc > 1) ? m_argv[1] : "<empty>";
 
                 parsers::ParserCSV parser;
-                file_reader::FileReader<parsers::ParserCSV> freader(&parser);
+                file_reader::FileReader<parsers::ParserInterface> freader(&parser);
                 freader.readFile(filename);
 
                 auto& dataV = parser.getData();
