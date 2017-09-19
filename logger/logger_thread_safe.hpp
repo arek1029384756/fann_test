@@ -52,10 +52,12 @@ namespace logger {
             return *this;
         }
 
-        Logger& operator<<(const manip& x) {
+        Logger& operator<<(const manip* const x) {
             if(m_os) {
                 *m_os << x;
-                resetID();
+                if(x == static_cast<manip*>(&std::endl)) {
+                    resetID();
+                }
             }
             return *this;
         }
