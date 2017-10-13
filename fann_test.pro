@@ -43,3 +43,11 @@ SOURCES += main.cpp \
 logger/logger.cpp \
 gui_qt/progress_qt.cpp \
 gui_qt/graph_qt.cpp
+
+release: DESTDIR = build/release
+debug:   DESTDIR = build/debug
+
+OBJECTS_DIR = $$DESTDIR/.obj
+MOC_DIR = $$DESTDIR/.moc
+RCC_DIR = $$DESTDIR/.qrc
+UI_DIR = $$DESTDIR/.ui
