@@ -99,44 +99,44 @@ namespace gui {
 
 
         //External synchronized interface
-        virtual void setData(const mw::DataVector& dataV, const std::set<int>& mask, const std::string& graphName) {
+        virtual void setData(const mw::DataVector& dataV, const std::set<int>& mask, const std::string& graphName) override {
             setSharedData(dataV, mask, graphName);
             notifyGraph();
         }
 
 
         //External interface
-        virtual void show() const {
+        virtual void show() const override {
             m_graph->show();
         }
 
 
         //Internal interface
-        virtual std::size_t graphDataLength() const {
+        virtual std::size_t graphDataLength() const override {
             return m_dataLen;
         }
 
-        virtual double graphDataMax() const {
+        virtual double graphDataMax() const override {
             return m_dataMax;
         }
 
-        virtual double graphDataMin() const {
+        virtual double graphDataMin() const override {
             return m_dataMin;
         }
 
-        virtual const std::string& graphName() const {
+        virtual const std::string& graphName() const override {
             return m_graphName;
         }
 
-        virtual const std::set<int>& dataMask() const {
+        virtual const std::set<int>& dataMask() const override {
             return m_mask;
         }
 
-        virtual const mw::DataVector& dataVector() const {
+        virtual const mw::DataVector& dataVector() const override {
             return m_dataV;
         }
 
-        virtual void newDataInit() {
+        virtual void newDataInit() override {
             getSharedData();
 
             m_dataLen = m_dataV.getElementsSize();

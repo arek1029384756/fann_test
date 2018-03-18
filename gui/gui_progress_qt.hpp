@@ -35,20 +35,20 @@ namespace gui {
         }
 
         //External synchronized interface
-        virtual void updateProgress(int value) {
+        virtual void updateProgress(int value) override {
             m_value.store(value);
             notifyProgress();
         }
 
 
         //External interface
-        virtual void show() const {
+        virtual void show() const override {
             m_progress->show();
         }
 
 
         //Internal interface
-        virtual int getValue() const {
+        virtual int getValue() const override {
             return m_value.load();
         }
 

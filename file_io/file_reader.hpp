@@ -13,6 +13,10 @@ namespace file_reader {
         TParser* m_parser;
 
         FileReader() = delete;
+        FileReader(const FileReader&) = delete;
+        FileReader(const FileReader&&) = delete;
+        FileReader& operator=(const FileReader&) = delete;
+        FileReader& operator=(const FileReader&&) = delete;
 
         void removeWindowsDelim(std::string& line) {
             try {
