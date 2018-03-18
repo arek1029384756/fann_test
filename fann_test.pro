@@ -13,14 +13,11 @@ LOCAL_QT5_PFX = x86_64-linux-gnu
 # Qt 5.5.x
 LOCAL_QT5_INC = $$LOCAL_QT5_PFX
 
-# Qt 5.2.x
-# LOCAL_QT5_INC =
-
 LOCAL_QT5_LIB = $$LOCAL_QT5_PFX
 INCLUDEPATH += .
 INCLUDEPATH += ./logger ./mw ./math ./file_io ./parser ./data_processor ./gui ./gui_qt
 INCLUDEPATH += /usr/include/$$LOCAL_QT5_INC/qt5/QtWidgets
-QMAKE_CXXFLAGS += -Wextra -pedantic -std=c++1y $$LOGMODE
+QMAKE_CXXFLAGS += -Wextra -pedantic -std=c++14 $$LOGMODE
 LIBS += -L/usr/lib/$$LOCAL_QT5_LIB -lQt5Widgets
 
 # Input

@@ -1,10 +1,10 @@
 #ifndef PROGRESSQT_H
 #define PROGRESSQT_H
 
-#include <memory>
 #include <QDialog>
 #include <QFormLayout>
 #include <QProgressBar>
+#include <memory>
 #include <gui_progress_interface.hpp>
 
 namespace gui_qt {
@@ -28,8 +28,6 @@ namespace gui_qt {
 
         public:
         ProgressQt(gui::GuiProgressInterfaceInt* ifc, QDialog* parent = 0);
-
-        protected:
     };
 }
 

@@ -3,8 +3,6 @@
 
 #include <QWidget>
 #include <gui_graph_interface.hpp>
-//#include <exception>
-//#include <stdexcept>    //covering g++ version differences
 
 namespace gui_qt {
 
