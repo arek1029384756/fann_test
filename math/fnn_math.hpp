@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <cmath>
 #include <logger.h>
 #include <data_format.hpp>
 
